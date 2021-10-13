@@ -1,0 +1,282 @@
+import random   #shuffle()
+import sys      #exit()
+
+# every Player starts off with 1000 chips
+chips = 1000
+
+#final_value is a public variable to compare the Players final hand value with the House's current hand value
+final_value = 0
+
+def script():
+    string_hand = []
+    # minimum chip cost to play a single round
+    pay_in = 100
+    blackjack = False
+    global chips
+
+    class Card(object):
+        # Lists to iterate through strings that represent card attributes during object creation
+        suits = ["Spades",
+                 "Hearts",
+                 "Diamonds",
+                 "Clubs"]
+
+        values = [None, None, "2", "3",
+                  "4", "5", "6", "7",
+                  "8", "9", "10",
+                  "Jack", "Queen",
+                  "King", "Ace"]
+
+	# Card requires a str value, and a str suit as parameters
+        def __init__(self, v, s):
+            """suit + value are ints"""
+            self.value = v
+            self.suit = s
+
+        def __repr__(self):
+            v = self.values[self.value] + " of " \
+             + self.suits[self.suit]
+            return v
+
+    class Deck(object):
+        def __init__(self):
+            self.cards = []
+
+	    # creates 13 cards in each suite for each value for a full deck of 52 cards then shuffles them
+            for i in range(2,15):
+                for j in range(4):
+                    self.cards.append(Card(i, j))
+                random.shuffle(self.cards)
+
+    class Player(object):
+        def __init__(self):
+            self.player_hand = []
+            self.hand_value = 0
+            # almost_bust tracks how many times an Ace was turned from an 11 to a 1
+            self.almost_bust = 0
+
+        #Hit copies that last card in the deck and adds it to the player hand, then it destroys the last card in the deck
+        def hit(self):
+            self.player_hand.append(deck.cards[-1])
+            deck.cards.pop()
+            print("You were dealt a ", self.player_hand[-1])
+            print()
+            string_hand.append(str(self.player_hand[-1]))
+            string_hand[-1].replace("[","")
+            string_hand[-1].replace("]","")
+            string_hand.append("\n")
+
+	    # most of the cards location in value list match the number they represent in Blackjack however jacks, queens, kings, and aces need custom values
+            if self.player_hand[-1].value in range(11, 14):
+                self.hand_value += 10
+            elif self.player_hand[-1].value == 14:
+                self.hand_value += 11
+            else:
+                self.hand_value += self.player_hand[-1].value
+
+	    # shows the player what their current hand is so they can make their next desision (skips the first one since you get 2 cards in the beginning
+            if len(self.player_hand) > 1:
+                print("Your hand consists of\n", " ".join(string_hand))
+            ace_count = " ".join(string_hand).count("Ace")
+
+            # downgrades an Ace to a one if the Player is about to bust
+            if self.hand_value > 21:
+                if ace_count > self.almost_bust:
+                    print("To prevent a Bust, your Ace became a one\n")
+                    self.hand_value -= 10
+                    self.almost_bust += 1
+                else:
+                    # Merged this function into the Player Class, restart() is a non-member function but it should work fine if you put it in the .h file
+                    print("Sorry you busted!")
+                    restart()
+
+	    # Checks to see if the Player has a natural Blackjack. 
+            if self.hand_value == 21:
+                if len(self.player_hand) == 2:
+                    global blackjack
+                    blackjack = True
+                    print("Blackjack!\nLets see if the House can match you.")
+                else:
+                    print("Your hand's value is 21, so you now stand")
+                self.stand()
+
+            if len(self.player_hand) > 1:
+                show_card()
+        
+        # doubles pay_in then hits then stands
+        def double_down(self):
+            global chips
+            chips -= pay_in
+            print("You slide another ", bet, " chips in and draw one last card")
+            print("Current Chip Count:", chips)
+            print()
+            self.hit()
+            self.stand()
+
+        # The player stops drawing cards and summits their 
+        def stand(self):
+            global final_value
+            final_value += self.hand_value
+            endgame()
+
+    class Dealer(object):
+        def __init__(self):
+            self.dealer_hand = []
+            self.table_value = 0
+            self.almost_bust = 0
+            self.string_house_hand = []
+        #Dealers modified version of hit(), not inheritance because of too many differences, could use composition
+        def hit(self):
+            self.dealer_hand.append(deck.cards[-1])
+            deck.cards.pop()
+            self.string_house_hand.append(str(self.dealer_hand[-1]))
+            self.string_house_hand[-1].replace("[","")
+            self.string_house_hand[-1].replace("]","")
+            self.string_house_hand.append("\n")
+
+	    # Hides the value of the first card the dealer draws and shows the player the card every other time
+            if len(self.dealer_hand) == 1:
+                print("The Dealer starts the Game\nThe Dealer drew a card and laid it face-down\n")
+            else:
+                print("The Dealer drew a ", self.dealer_hand[-1])
+                print()
+            if self.dealer_hand[-1].value in range(11, 14):
+                self.table_value += 10
+            elif self.dealer_hand[-1].value == 14:
+                self.table_value += 11
+            else:
+                self.table_value += self.dealer_hand[-1].value
+
+        def endgame(self):
+            global chips
+            print("The Dealer flips the House's face-down card and it is: ", self.dealer_hand[0])
+            print("The House's hand consists of\n", " ".join(self.string_house_hand))
+            while self.table_value < 17:
+                self.hit()
+                print("The House's hand consists of\n", " ".join(self.string_house_hand))
+
+		# complicated way of counting Aces in the House's hand, maybe try to simplify?
+                ace_count = " ".join(self.string_house_hand).count("Ace")
+                if self.table_value > 21:
+                    if ace_count > self.almost_bust:
+                        print("To prevent a Bust, the House's Ace became a one\n")
+                        self.table_value -= 10
+                        self.almost_bust += 1
+                        continue
+                    print("The House Busted at: ", self.table_value)
+                    print()
+                    print("You won!")
+                    if blackjack == True:
+                        chips += bet * 2.5
+                    else:
+                        chips += bet * 2
+                    restart()
+            print("The House stood at: ", self.table_value, "And you stood at: ", final_value)
+            print()
+            if final_value - self.table_value > 0:
+                print("You won!")
+                chips += bet * 2
+                restart()
+            else:
+                if final_value == self.table_value:
+                    print("The House always wins ties.")
+                print("Sorry, you lose.")
+                restart()
+    # initializing all the classes in the game
+    deck = Deck()
+    player1 = Player()
+    dealer = Dealer()
+
+    def show_card():
+        print("The Dealer's face-up card is a\n ", dealer.dealer_hand[-1])
+
+    # I assume that this is to get endgame in the Player Class?
+    def endgame():
+        dealer.endgame()
+
+    # resets final_value and the Dealer's table_value to 0, asks the player if they want to play again, and tests to see if they player can at least pay the pay_in
+    def restart():
+        global final_value
+        final_value = 0
+        dealer.table_value = 0
+        print("Your Chip count is: ", chips)
+        if chips < pay_in:
+             print("You are broke and don't have the chips for the pay-in for this table.")
+             sys.exit()
+
+        while True:
+            restart_game = input("Would you like to play again or Cashout? (y/n): ")
+            restart_game = restart_game.lower()
+            print()
+            if restart_game == "y" or restart_game == "yes":
+                script()
+            elif restart_game == "n" or restart_game == "no":
+                print("We'll deal you out.  Thanks for playing!")
+                sys.exit()
+            else:
+                print("Invalid Input.")
+
+    #start game
+    print("Starting a game of Blackjack, the Computer will be the Dealer.")
+    print("The Dealer gestures and says \"The pay-in for this table is", pay_in,"chips.\"\n")
+
+    if chips < pay_in:
+        print("Your chip count is:", chips)
+        print("\nThe Dealer puts his deck of cards down and mutters \"How 'bout you head on home?  Lady Luck obviously doesn't got your back today.\"")
+        sys.exit()
+
+    print("Your chip count is:", chips)
+
+    #deals with the pay_in and all the different outcomes to the player's decision
+    while True:
+        bet = input("What's your bet? ")
+        if bet == "walk away" or bet == "walk out" or bet == "cash out":
+            print("\nThe Dealer shrugs his shoulders and quips \"You'll be back, people like you always do.\"")
+            sys.exit()
+
+        bet = int(bet)
+        if bet < pay_in:
+            print("\nThe Dealer rolls his eyes and grunts \"You gotta pay if you wanna play at my table.\"\n")
+        elif bet >= pay_in:
+            print("\nThe Dealer grins, nods his head, and starts shuffling the cards.\n")
+            break
+        else:
+            print("\nInvalid Input\n")
+
+    # Instructions to the User of how to play the game
+    print("The moves you can make are:\n \nH = Hit. Take another card from the Dealer.\n    If you get 21 and the House doesn't, you win! \n    Careful! If your hand goes over 21 you lose!")
+    print()
+    print("S = Stand. Stop taking cards.\n    You are betting that your hand will be closer to 21 before the House's hand busts, (goes over 21) or stands.")
+    print()
+    print("D = Double Down. Double your bet and draw one more card before Standing.")
+    print("______________________________________________________________________________________")
+    print()
+    
+    # Setting up the beginning of the game before the User's first turn
+    chips -= bet
+    dealer.hit()
+    player1.hit()
+    dealer.hit()
+    player1.hit()
+
+    #The loop that the Player has control over until they bust or stand
+    while True:
+        print()
+        player_move = input("H = Hit, D = Double Down, S = Stand: ")
+        if player_move == "H" or player_move == "h":
+            print("You chose to Hit")
+            print()
+            player1.hit()
+        elif player_move == "D" or player_move == "d":
+            print("You chose to Double Down")
+            print()
+            player1.double_down()
+        elif player_move == "S" or player_move == "s":
+            print("You chose to Stand")
+            print()
+            player1.stand()
+        else:
+            print("Invalid Input.")
+            print()
+
+script()
