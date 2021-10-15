@@ -1,11 +1,9 @@
 # cse210-project-team3
 
 ## Overview:
----
 Your final project will be a game or an interactive simulation that you create using the knowledge and experience you've gained about programming with classes.
 
 ## Requirements:
----
 1. The program may be any type of game or interactive simulation.
 2. The program should use classes and objects.
 3. The program should use the four principles of object-oriented programming.
@@ -15,7 +13,6 @@ Your final project will be a game or an interactive simulation that you create u
 7. The program should be entered in the end-of-course contest.
 
 ## Class Structure:
----
 - Card
   - Hearts
   - Clubs
@@ -27,7 +24,7 @@ Your final project will be a game or an interactive simulation that you create u
 - Board
 
 ## Project Questions:
----
+
 What program are we going to create? Use your brainstorming from the solo checkpoint to answer this question together.
 - Card game called Blackjack
 
