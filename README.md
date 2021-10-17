@@ -50,4 +50,4 @@ What is your timeline? The answer to this question is mostly already decided. Ju
 * Carter Askelson Askelsonc@gmail.com
 * Graham Walker walkerg5@byui.edu
 * Emma Burkett bur20089@byui.edu
-#add Alex
+* Alex Parker kingsknight22@gmail.com 
