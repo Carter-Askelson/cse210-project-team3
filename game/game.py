@@ -1,5 +1,6 @@
 import arcade
 from .game_rules_view import GameRules
+from .game_view import GameView
 
 
 class Game(arcade.View):
@@ -23,7 +24,7 @@ class Game(arcade.View):
 
         arcade.finish_render()
 
-    def on_key_press(self, symbol: int, modifiers: int):
+    def on_mouse_press(self, _x, _y, _button, _modifiers):
         """Starts the game loop to control the sequence of play.
 
         Args:
@@ -32,9 +33,10 @@ class Game(arcade.View):
 
         if symbol == arcade.key.E:
             # Go to game window
+            print("e")
             game_view = GameView()
             self.window.show_view(game_view)
-            pass
+
         elif symbol == arcade.key.L:
             # Go to game rules window
             print("You pressed L")
