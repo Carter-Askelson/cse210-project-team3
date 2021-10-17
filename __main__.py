@@ -7,7 +7,7 @@ SCREEN_TITLE = "Blackjack"
 
 
 def main():
-    window = Game(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    window = Game()
     window.start_game()
     arcade.run()
 
