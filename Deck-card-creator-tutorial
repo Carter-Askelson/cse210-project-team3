@@ -1,5 +1,5 @@
 # Sprite list with all the cards, no matter what pile they are in. Goes in main
-        self.card_list = None
+self.card_list = None
 
 # Constants for sizing
 CARD_SCALE = 0.6
