@@ -18,4 +18,3 @@ class GameView(arcade.View):
         card_seven.center_x = 100
         card_seven.center_y = 100
         self.cards_list.append(card_seven)
-    
