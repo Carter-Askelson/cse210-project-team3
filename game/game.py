@@ -4,10 +4,10 @@ from .game_view import GameView
 from .menu_view import MenuView
 
 
-class Game(arcade.View):
+class Game(arcade.Window):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, width, height, title):
+        super().__init__(width, height, title)
         self.yes = False
 
         self.menu_view = MenuView()
