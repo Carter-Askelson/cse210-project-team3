@@ -4,17 +4,11 @@ class GameView(arcade.View):
     def __init__(self):
         super().__init__()
         self.cards_list = None
-        self.sound = arcade.Sound(":resources:sounds/laser1.wav")
-        self.pan = 0
-        self.volume = 1
+
 
     def setup(self):
         self.cards_list = arcade.SpriteList()
     
-    def play(self):
-        """ Play """
-        self.sound.play(pan=self.pan, volume=self.volume)
-
     def on_draw(self):
         arcade.start_render()
         arcade.set_background_color(arcade.color.AMAZON)
