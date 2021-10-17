@@ -1,7 +1,7 @@
 import arcade
 
 
-class GameRules(arcade.View):
+class GameRulesView(arcade.View):
     def __init__(self):
         super().__init__()
 
