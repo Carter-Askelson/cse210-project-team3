@@ -19,3 +19,19 @@ class Game(arcade.Window):
         arcade.draw_text("Press 'E' to enter into a game of Blackjack", 100, 325, arcade.color.BLACK, 16)
         arcade.draw_text("Press 'L' to learn the rules of Blackjack", 100, 225, arcade.color.BLACK, 16)
         arcade.finish_render()
+
+    def on_key_press(self, symbol: int, modifiers: int):
+        """Starts the game loop to control the sequence of play.
+
+        Args:
+            self (Director): an instance of Director.
+        """
+
+        if symbol == arcade.key.E:
+            # Go to game window
+            print("You pressed E")
+            pass
+        elif symbol == arcade.key.L:
+            # Go to game rules window
+            print("You pressed L")
+            pass
