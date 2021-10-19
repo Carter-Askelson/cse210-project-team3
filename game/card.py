@@ -1,0 +1,36 @@
+import arcade
+
+
+class Card(arcade.Sprite):
+    """ Card sprite """
+
+    def __init__(self, suit, value, scale=1):
+        """ Card constructor """
+
+        # Attributes for suit and value
+        self.suit = suit
+        self.value = value
+
+        # Image to use for the sprite when face up
+        self.image_file_name = f":resources:images/cards/card{self.suit}{self.value}.png"
+        #need to make first dealer card face down
+        """ self.is_face_up = False
+        super().__init__(FACE_DOWN_IMAGE, scale, hit_box_algorithm="None")
+
+    def face_down(self):
+        #Turn card face-down
+        self.texture = arcade.load_texture(FACE_DOWN_IMAGE)
+        self.is_face_up = False
+
+    def face_up(self):
+        #Turn card face-up
+        self.texture = arcade.load_texture(self.image_file_name)
+        self.is_face_up = True """
+
+        # Call the parent
+        super().__init__(self.image_file_name, scale, hit_box_algorithm="None")
+
+    def __repr__(self):
+            x = self.value + " of " \
+             + self.suit
+            return x
