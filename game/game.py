@@ -14,7 +14,7 @@ class Game(arcade.Window):
         self.game_rules_view = GameRulesView()
         self.audio_name = arcade.sound.load_sound(":resources:sounds/laser1.wav")
         self.audio_name_two = arcade.sound.load_sound(":resources:sounds/hurt2.wav")
-
+        self.audio_name_three = arcade.sound.load_sound(":resources:sounds/gameover5.wav")
 
     def start_game(self):
         self.setup()
@@ -35,4 +35,16 @@ class Game(arcade.Window):
             print("'L' key pressed")
             arcade.sound.play_sound(self.audio_name_two)
             self.show_view(self.game_rules_view)
+        
+        elif symbol == arcade.key.M:
+            # Return to Main menu
+            print("'M' key pressed")
+            arcade.sound.play_sound(self.audio_name_two)
+            self.show_view(self.menu_view)
+        elif symbol == arcade.key.Q:
+            print("'Q' key pressed")
+            arcade.sound.play_sound(self.audio_name_three)
+            self.show_view(self.menu_view)
+        
+            
 
