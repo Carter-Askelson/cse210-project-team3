@@ -1,20 +1,290 @@
 import arcade
+from .card import Card
+import random
+import sys
+
+# Constants for sizing
+CARD_SCALE = 0.6
+
+# How big are the cards?
+CARD_WIDTH = 140 * CARD_SCALE
+CARD_HEIGHT = 190 * CARD_SCALE
+
+# How big is the mat we'll place the card on?
+MAT_PERCENT_OVERSIZE = 1.25
+MAT_HEIGHT = int(CARD_HEIGHT * MAT_PERCENT_OVERSIZE)
+MAT_WIDTH = int(CARD_WIDTH * MAT_PERCENT_OVERSIZE)
+
+# How much space do we leave as a gap between the mats?
+# Done as a percent of the mat size.
+VERTICAL_MARGIN_PERCENT = 0.10
+HORIZONTAL_MARGIN_PERCENT = 0.10
+
+# The Y of the bottom row (2 piles)
+BOTTOM_Y = MAT_HEIGHT / 2 + MAT_HEIGHT * VERTICAL_MARGIN_PERCENT
+
+# The X of where to start putting things on the left side
+START_X = MAT_WIDTH / 2 + MAT_WIDTH * HORIZONTAL_MARGIN_PERCENT
+
+# Card constants
+CARD_VALUES = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
+CARD_SUITS = ["Clubs", "Hearts", "Spades", "Diamonds"]
+FACE_CARDS = ["J", "Q", "K"]
+
+
+
+
+#maybe bust sound gameover4.wav
+#maybe win sound upgrade2.wav
+chips = 1000
+
 
 class GameView(arcade.View):
     def __init__(self):
         super().__init__()
-        self.cards_list = None
+        #self.cards_list = None
+        self.cards_list = []
+        self.top_card_int = 0
+        self.player_hand = []
+        self.dealer_hand = []
+        self.player_value = 0
+        self.dealer_value = 0
+        self.player_ace_count = 0
+        self.dealer_ace_count = 0
+        self.player_almost_bust = 0
+        self.dealer_almost_bust = 0
+        self.blackjack = False
+        self.victory = False
+        self.defeat = False
+        self.game_over = False
+        self.setup_newgame()
+        
+        
+
+    def setup_newgame(self):
+        global chips
+        if chips < 100:
+            self.game_over = True
+        chips -= 100
+        self.bet = 100
+
+
         self.cards_list = arcade.SpriteList()
+
+        #resets on newgame
+        self.player_hand = []
+        self.dealer_hand = []
+        self.player_value = 0
+        self.dealer_value = 0
+        self.player_ace_count = 0
+        self.dealer_ace_count = 0
+        self.player_almost_bust = 0
+        self.dealer_almost_bust = 0
+        self.blackjack = False
+        self.victory = False
+        self.defeat = False
+        
+        #creates deck
+        for card_suit in CARD_SUITS:
+            for card_value in CARD_VALUES:
+                card = Card(card_suit, card_value, CARD_SCALE)
+                self.cards_list.append(card)
+        #shuffles deck
+        for pos1 in range(len(self.cards_list)):
+            pos2 = random.randrange(len(self.cards_list))
+            self.cards_list.swap(pos1, pos2)
+            
+        #Current way to add cards to player and dealer hands since using .pop() on self.cards_list deletes the card itself even in the other hands
+        
+        #self.dealer_hand.append(self.top_card_int)
+        self.hit("dealer")
+        self.hit("player")
+        self.hit("dealer")
+        self.hit("player")
+
+    
+
+
+        self.update_card_positions()
+        
+    def calculate_value(self, hand):
+        global FACE_CARDS
+        #could refactor the 2 hand possiblities into methods of a Dealer and Player Class
+        if hand == "player":
+            if self.player_hand[-1].value in FACE_CARDS:
+                self.player_value += 10
+            elif self.player_hand[-1].value == "A":
+                self.player_value += 11
+                self.player_ace_count += 1
+            else:
+                self.player_value += int(self.player_hand[-1].value)
+
+            if self.player_value > 21:
+                if self.player_ace_count > self.player_almost_bust:
+                    #To prevent a Bust, your Ace became a one
+                    self.player_value -= 10
+                    self.player_almost_bust += 1
+                else:
+                    self.player_lose()
+            elif self.player_value == 21:
+                self.blackjack = True
+                self.endgame()
+
+        elif hand == "dealer":
+            if self.dealer_hand[-1].value in FACE_CARDS:
+                self.dealer_value += 10
+            elif self.dealer_hand[-1].value == "A":
+                self.dealer_value += 11
+                self.dealer_ace_count += 1
+            else:
+                self.dealer_value += int(self.dealer_hand[-1].value)
+
+            if self.dealer_value > 21:
+                if self.dealer_ace_count > self.dealer_almost_bust:
+                    #To prevent a Bust, the Dealer's Ace became a one
+                    self.dealer_value -= 10
+                    self.dealer_almost_bust += 1
+                else:
+                    self.player_win()
+            elif self.dealer_value == 21:
+                self.player_lose()
+
+        
+
+    def hit(self, hand):
+        if hand == "player":
+            self.player_hand.append(self.cards_list[self.top_card_int])
+            self.calculate_value("player")
+        elif hand == "dealer":
+            self.dealer_hand.append(self.cards_list[self.top_card_int])
+            self.calculate_value("dealer")
+        self.top_card_int += 1
+        self.update_card_positions()
+
+
+    def double_down(self):
+        global chips
+        chips -= 100
+        self.bet += 100
+        self.hit("player")
+        self.endgame()
+
+    def stand(self):
+        self.endgame()
+
+    def player_win(self):
+        global chips
+        if self.blackjack:
+            chips += (self.bet * 2.5)
+        else:
+            chips += (self.bet * 2)
+        self.victory = True
+
+    def player_lose(self):
+        self.defeat = True
+
+    def endgame(self):
+        while self.dealer_value < 17:
+                self.hit("dealer")
+
+        if (self.player_value - self.dealer_value) > 0:
+           self.player_win()
+        else:
+            self.player_lose()
+        
+        
+    
+
+        
     
     def on_draw(self):
+        global chips
         arcade.start_render()
         arcade.set_background_color(arcade.color.AMAZON)
-        arcade.draw_text("Blackjack game will be here.", 65, 425, arcade.color.BLACK, 16)
-        self.draw_card()
-        self.cards_list.draw()
+        arcade.draw_text("Blackjack", 65, 550, arcade.color.BLACK, 16)
+        arcade.draw_text(f"Chips: {int(chips)}", 265, 550, arcade.color.BLACK, 16)
+        arcade.draw_text("[H] = Hit    [D] = Double Down    [S] = Stand    [Q] = Quit Game", 65, 525, arcade.color.BLACK, 16)
+        arcade.draw_text("Dealer's Hand", 80, 450, arcade.color.BLACK, 16)
+        arcade.draw_text("Player's Hand", 80, 250, arcade.color.BLACK, 16)
+        arcade.draw_text(f"Value: {self.dealer_value}", 280, 450, arcade.color.BLACK, 16)
+        arcade.draw_text(f"Value: {self.player_value}", 280, 250, arcade.color.BLACK, 16)
+
+        if self.blackjack:
+            arcade.draw_text("Blackjack!", 480, 250, arcade.color.BLACK, 16)
+        if self.victory:
+            arcade.draw_text("You Won", 65, 525, arcade.color.BLUE, 64)
+            arcade.draw_text("Would you like to play again? [Y/N]", 65, 425, arcade.color.BLUE, 24)
+        elif self.defeat:
+            arcade.draw_text("You Lost", 65, 525, arcade.color.RED, 64)
+            arcade.draw_text("Would you like to play again? [Y/N]", 65, 425, arcade.color.RED, 24)
+        if self.game_over:
+            arcade.draw_text("All out of Chips", 65, 525, arcade.color.BLACK, 64)
+            arcade.draw_text("Press [Q] to quit game, (in shame)", 65, 425, arcade.color.BLACK, 24)
+
+       
+        for i in self.dealer_hand:
+            i.draw()
+        for j in self.player_hand:
+            j.draw()
+        
+
+
+
+    def update_card_positions(self):
+        dealer_y = 350
+        player_y = 150
+        x_position = 100
+        for i in self.dealer_hand:
+            i.position = (x_position, dealer_y)
+            x_position += 100
+        x_position = 100
+        for j in self.player_hand:
+            j.position = (x_position, player_y)
+            x_position += 100
+
+
+
+
+    def on_key_press(self, symbol: int, modifiers: int):
+        audio_name = arcade.sound.load_sound(":resources:sounds/laser1.wav")
+        audio_name_three = arcade.sound.load_sound(":resources:sounds/rockHit2.wav")
+        audio_name_four = arcade.sound.load_sound(":resources:sounds/coin3.wav")
+        audio_name_five = arcade.sound.load_sound(":resources:sounds/coin4.wav")
+
+        if symbol == arcade.key.H and not self.game_over:
+            # Hit
+            print("'H' key pressed")
+            arcade.sound.play_sound(audio_name_three)
+            self.hit("player")
+
+        elif symbol == arcade.key.D and not self.game_over:
+            # Double Down
+            print("'D' key pressed")
+            arcade.sound.play_sound(audio_name_four)
+            self.double_down()
+
+        elif symbol == arcade.key.S and not self.game_over:
+            # Stand
+            print("'S' key pressed")
+            arcade.sound.play_sound(audio_name_five)
+            self.stand()
+
+        elif symbol == arcade.key.Y and (self.victory or self.defeat):
+            # Restart
+            print("'Y' key pressed")
+            arcade.sound.play_sound(audio_name)
+            self.setup_newgame()
     
-    def draw_card(self):
-        card_seven = arcade.Sprite(":resources:images/cards/cardHearts7.png", 1)
-        card_seven.center_x = 100
-        card_seven.center_y = 100
-        self.cards_list.append(card_seven)
+        elif symbol == arcade.key.N and (self.victory or self.defeat):
+            # Quit
+            print("'N' key pressed")
+            sys.exit()
+    
+        elif symbol == arcade.key.Q:
+            print("'N' key pressed")
+            sys.exit()
+
+
+        
+
+
