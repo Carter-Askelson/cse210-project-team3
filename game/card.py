@@ -10,6 +10,7 @@ class Card(arcade.Sprite):
         # Attributes for suit and value
         self.suit = suit
         self.value = value
+        self.face_down_image = "cardBack_red4.png"
 
         # Image to use for the sprite when face up
         self.image_file_name = f":resources:images/cards/card{self.suit}{self.value}.png"
