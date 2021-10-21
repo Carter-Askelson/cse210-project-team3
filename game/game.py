@@ -10,7 +10,7 @@ class Game(arcade.Window):
         super().__init__(width, height, title)
 
         self.menu_view = MenuView()
-        self.game_view = GameView()
+        self.game_view = GameView(self)
         self.game_rules_view = GameRulesView()
         self.audio_name = arcade.sound.load_sound(":resources:sounds/laser1.wav")
         self.audio_name_two = arcade.sound.load_sound(":resources:sounds/hurt2.wav")

@@ -42,7 +42,7 @@ chips = 1000
 
 
 class GameView(arcade.View):
-    def __init__(self):
+    def __init__(self, gameWindow):
         super().__init__()
         #self.cards_list = None
         self.cards_list = []
@@ -60,6 +60,7 @@ class GameView(arcade.View):
         self.defeat = False
         self.game_over = False
         self.setup_newgame()
+        self.gameWindow = gameWindow
         
         
 
@@ -306,11 +307,11 @@ class GameView(arcade.View):
         elif symbol == arcade.key.N and (self.victory or self.defeat):
             # Quit
             print("'N' key pressed")
-            sys.exit()
+            self.gameWindow.close()
     
         elif symbol == arcade.key.Q:
             print("'N' key pressed")
-            sys.exit()
+            self.gameWindow.close()
 
 
         

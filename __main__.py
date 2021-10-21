@@ -1,8 +1,8 @@
 import arcade
 from game.game import Game
-from game.menu_view import MenuView
 
-SCREEN_WIDTH = 600
+
+SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 SCREEN_TITLE = "Blackjack"
 
