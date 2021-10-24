@@ -70,11 +70,12 @@ class GameView(arcade.View):
             self.game_over = True
         chips -= 100
         self.bet = 100
-
+        
 
         self.cards_list = arcade.SpriteList()
 
         #resets on newgame
+        self.top_card_int = 0 ## this had to be moved here to make it so that you are not drawing over the 52 card limit
         self.player_hand = []
         self.dealer_hand = []
         self.player_value = 0
