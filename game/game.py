@@ -7,6 +7,22 @@ from .menu_view import MenuView
 
 
 class Game(arcade.Window):
+    """A code template for a person who directs the game. The responsibility of 
+    this class of objects is to keep track of the score and control the 
+    sequence of play.
+    
+    Attributes:
+        menu_view (MenuView): an instance of MenuView
+        continue_game_view (ContinueGameView): an instance of ContinueGameView
+        game_view (GameView): an instance of GameView
+        game_rules_view (GameRulesView): an instance of GameRulesView
+        audio_name (sound): a sound from the arcade library
+        audio_name_two (sound): a sound from the arcade library
+        self.audio_name_three (sound): a sound from the arcade library
+        self.audio_name_four (sound): a sound from the arcade library
+        self.audio_name_five (sound): a sound from the arcade library
+        self.ingame (boolean): indicates wether the user is playing the game or not
+    """
     def __init__(self, width, height, title):
         """Initializes attributes
         
