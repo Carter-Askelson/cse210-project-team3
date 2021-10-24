@@ -1,9 +1,12 @@
 import arcade
 from .card import Card
 import random
+from .continue_game_view import ContinueGameView
 import sys
 
 # Constants for sizing
+
+
 CARD_SCALE = 0.6
 
 # How big are the cards?
@@ -42,7 +45,8 @@ chips = 1000
 
 
 class GameView(arcade.View):
-    def __init__(self, gameWindow):
+
+    def __init__(self, continue_game_view, game_window):
         super().__init__()
         #self.cards_list = None
         self.cards_list = []
@@ -60,11 +64,14 @@ class GameView(arcade.View):
         self.defeat = False
         self.game_over = False
         self.setup_newgame()
-        self.gameWindow = gameWindow
         self.gif = arcade.load_animated_gif("game\penguin\card.gif")
         self.gif.center_x = 400
         self.gif.center_y = 300
         self.time = 0
+        self.continue_game_view = continue_game_view
+        self.game_window = game_window
+        
+        
 
     def setup_newgame(self):
         global chips
@@ -257,6 +264,23 @@ class GameView(arcade.View):
                 arcade.draw_text("All out of Chips", 65, 525, arcade.color.BLACK, 64)
                 arcade.draw_text("Press [Q] to quit game, (in shame)", 65, 425, arcade.color.BLACK, 24)
 
+        if self.blackjack:
+            arcade.draw_text("Blackjack!", 480, 250, arcade.color.BLACK, 16)
+        if self.victory:
+            self.continue_game_view.set_victory(self.victory)
+            self.game_window.show_view(self.continue_game_view)
+        elif self.defeat:
+            self.continue_game_view.set_defeat(self.defeat)
+            self.game_window.show_view(self.continue_game_view)
+        if self.game_over:
+            self.continue_game_view.set_game_over(self.game_over)
+            self.game_window.show_view(self.continue_game_view)
+
+       
+        for i in self.dealer_hand:
+            i.draw()
+        for j in self.player_hand:
+            j.draw()
         
             for i in self.dealer_hand:
                 i.draw()
@@ -293,36 +317,18 @@ class GameView(arcade.View):
 
         if symbol == arcade.key.H and not self.game_over:
             # Hit
-            print("'H' key pressed")
             arcade.sound.play_sound(audio_name_three)
             self.hit("player")
 
         elif symbol == arcade.key.D and not self.game_over:
             # Double Down
-            print("'D' key pressed")
             arcade.sound.play_sound(audio_name_four)
             self.double_down()
 
         elif symbol == arcade.key.S and not self.game_over:
             # Stand
-            print("'S' key pressed")
             arcade.sound.play_sound(audio_name_five)
             self.stand()
-
-        elif symbol == arcade.key.Y and (self.victory or self.defeat):
-            # Restart
-            print("'Y' key pressed")
-            arcade.sound.play_sound(audio_name)
-            self.setup_newgame()
-    
-        elif symbol == arcade.key.N and (self.victory or self.defeat):
-            # Quit
-            print("'N' key pressed")
-            self.gameWindow.close()
-    
-        elif symbol == arcade.key.Q:
-            print("'N' key pressed")
-            self.gameWindow.close()
 
 
         
