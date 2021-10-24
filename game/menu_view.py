@@ -18,7 +18,7 @@ class MenuView(arcade.View):
         arcade.draw_text("Welcome to Blackjack", 600 / 2, 600 / 2,
 
         arcade.draw_text("Welcome to Blackjack", self.window_width / 2, self.window_width / 2,
-                         arcade.color.BLACK, font_size=30, anchor_x="center")
+                         arcade.color.BLACK, font_size=30, anchor_x="center"))
         arcade.draw_text("Press 'E' to enter into a game of Blackjack", self.window_width / 2,
                          self.window_width / 2 - 75,
                          arcade.color.BLACK, font_size=20, anchor_x="center")
