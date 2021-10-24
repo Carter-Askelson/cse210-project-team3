@@ -34,13 +34,15 @@ FACE_CARDS = ["J", "Q", "K"]
 
 
 
+
+
 #maybe bust sound gameover4.wav
 #maybe win sound upgrade2.wav
 chips = 1000
 
 
 class GameView(arcade.View):
-    def __init__(self):
+    def __init__(self, gameWindow):
         super().__init__()
         #self.cards_list = None
         self.cards_list = []
@@ -58,6 +60,7 @@ class GameView(arcade.View):
         self.defeat = False
         self.game_over = False
         self.setup_newgame()
+        self.gameWindow = gameWindow
         
         
 
@@ -98,6 +101,10 @@ class GameView(arcade.View):
         
         #self.dealer_hand.append(self.top_card_int)
         self.hit("dealer")
+        self.dealer_hand[0].face_down()
+        #first_card = self.dealer_hand[0]
+        #first_card.face_down()
+        #self.dealer_hand[0].face_down()
         self.hit("player")
         self.hit("dealer")
         self.hit("player")
@@ -131,23 +138,24 @@ class GameView(arcade.View):
                 self.endgame()
 
         elif hand == "dealer":
-            if self.dealer_hand[-1].value in FACE_CARDS:
-                self.dealer_value += 10
-            elif self.dealer_hand[-1].value == "A":
-                self.dealer_value += 11
-                self.dealer_ace_count += 1
-            else:
-                self.dealer_value += int(self.dealer_hand[-1].value)
-
-            if self.dealer_value > 21:
-                if self.dealer_ace_count > self.dealer_almost_bust:
-                    #To prevent a Bust, the Dealer's Ace became a one
-                    self.dealer_value -= 10
-                    self.dealer_almost_bust += 1
+            if len(self.dealer_hand) > 1:
+                if self.dealer_hand[-1].value in FACE_CARDS:
+                    self.dealer_value += 10
+                elif self.dealer_hand[-1].value == "A":
+                    self.dealer_value += 11
+                    self.dealer_ace_count += 1
                 else:
-                    self.player_win()
-            elif self.dealer_value == 21:
-                self.player_lose()
+                    self.dealer_value += int(self.dealer_hand[-1].value)
+
+                if self.dealer_value > 21:
+                    if self.dealer_ace_count > self.dealer_almost_bust:
+                        #To prevent a Bust, the Dealer's Ace became a one
+                        self.dealer_value -= 10
+                        self.dealer_almost_bust += 1
+                    else:
+                        self.player_win()
+                elif self.dealer_value == 21:
+                    self.player_lose()
 
         
 
@@ -184,6 +192,27 @@ class GameView(arcade.View):
         self.defeat = True
 
     def endgame(self):
+        #reveals the dealer's first card then the dealer hits until the dealer's hand's value is above 16
+        self.dealer_hand[0].face_up()
+        if self.dealer_hand[0].value in FACE_CARDS:
+            self.dealer_value += 10
+        elif self.dealer_hand[0].value == "A":
+            self.dealer_value += 11
+            self.dealer_ace_count += 1
+        else:
+            self.dealer_value += int(self.dealer_hand[0].value)
+
+        if self.dealer_value > 21:
+            if self.dealer_ace_count > self.dealer_almost_bust:
+                #To prevent a Bust, the Dealer's Ace became a one
+                self.dealer_value -= 10
+                self.dealer_almost_bust += 1
+            else:
+                self.player_win()
+        #House always wins Ties
+        elif self.dealer_value == 21:
+            self.player_lose()
+
         while self.dealer_value < 17:
                 self.hit("dealer")
 
@@ -278,11 +307,11 @@ class GameView(arcade.View):
         elif symbol == arcade.key.N and (self.victory or self.defeat):
             # Quit
             print("'N' key pressed")
-            sys.exit()
+            self.gameWindow.close()
     
         elif symbol == arcade.key.Q:
             print("'N' key pressed")
-            sys.exit()
+            self.gameWindow.close()
 
 
         
