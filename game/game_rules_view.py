@@ -3,10 +3,20 @@ import arcade
 
 class GameRulesView(arcade.View):
     def __init__(self):
+        """Initializer; uses inheritance for arcade.View
+        
+        Args:
+            self (GameRulesView): an instance of GameRulesView.
+        """
         super().__init__()
 
+
     def on_draw(self):
+        """Displays rules
         
+        Args:
+            self (GameRulesView): an instance of GameRulesView.
+        """
         arcade.start_render()
         arcade.set_background_color(arcade.color.AMAZON)
         arcade.draw_text("Game Rules", 20, 550, arcade.color.BLACK, 34)

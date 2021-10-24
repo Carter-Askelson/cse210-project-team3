@@ -6,6 +6,14 @@ class Card(arcade.Sprite):
     """ Card sprite """
 
     def __init__(self, suit, value, scale=1):
+        """Initializes attributes and uses inheritance for arcade.Sprite
+        
+        Args:
+            self (Card): an instance of Card.
+            suit (int): determines the suit of the card
+            value (int): card number
+            scale (int): size of the card
+        """
         """ Card constructor """
 
         # Attributes for suit and value
@@ -20,17 +28,30 @@ class Card(arcade.Sprite):
         super().__init__(self.image_file_name, scale, hit_box_algorithm="None")
 
     def face_down(self):
-        """ Turn card face-down """
+        """Turns dealers first card face-down
+        
+        Args:
+            self (Card): an instance of Card.
+        """
         self.texture = arcade.load_texture(self.face_down_image)
         self.is_face_up = False
 
     def face_up(self):
-        """ Turn card face-up """
+        """Turns cards up
+        
+        Args:
+            self (Card): an instance of Card.
+        """
         self.texture = arcade.load_texture(self.image_file_name)
         self.is_face_up = True
 
 
     def __repr__(self):
-            x = self.value + " of " \
-             + self.suit
-            return x
+        """Grabs the right card and suit
+        
+        Args:
+            self (Card): an instance of Card.
+        """
+        x = self.value + " of " \
+            + self.suit
+        return x

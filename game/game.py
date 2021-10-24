@@ -8,6 +8,14 @@ from .menu_view import MenuView
 
 class Game(arcade.Window):
     def __init__(self, width, height, title):
+        """Initializes attributes
+        
+        Args:
+            self (Game): an instance of Game.
+            widthe (int): width of the screen
+            height(int): height of the screen
+            title (string): the title of the game
+        """
         super().__init__(width, height, title)
 
         self.menu_view = MenuView()
@@ -24,13 +32,30 @@ class Game(arcade.Window):
 
 
     def start_game(self):
+        """Starts the game
+        
+        Args:
+            self (Game): an instance of Game.
+        """
         self.setup()
 
     def setup(self):
+        """dispalys the main menu
+        
+        Args:
+            self (Game): an instance of Game.
+        """
         self.show_view(self.menu_view)
         arcade.get_window().center_window()
 
     def on_key_press(self, symbol: int, modifiers: int):
+        """Controls the sequence of play.
+        
+        Args:
+            self (Game): an instance of Game.
+            symbol (int): this takes user input
+            modifiers (int): this takes user input
+        """
         if symbol == arcade.key.E:
             # Go to game window
             arcade.sound.play_sound(self.audio_name)

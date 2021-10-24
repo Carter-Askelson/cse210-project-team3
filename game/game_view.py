@@ -47,6 +47,14 @@ chips = 1000
 class GameView(arcade.View):
 
     def __init__(self, continue_game_view, game_window):
+        """Initializes class attributes
+        
+        Args:
+            self (GameView): an instance of GameView.
+            continue_game_view (ContinueGameView): an instance of ContinueGameView
+            game_window (Game): an instance of Game
+
+        """
         super().__init__()
         #self.cards_list = None
         self.cards_list = []
@@ -75,6 +83,12 @@ class GameView(arcade.View):
         
 
     def setup_newgame(self):
+        """Starts the game loop to control the sequence of play.
+        
+        Args:
+            self (GameView): an instance of GameView.
+
+        """
         global chips
         if chips < 100:
             self.game_over = True
@@ -122,6 +136,12 @@ class GameView(arcade.View):
         self.update_card_positions()
         
     def calculate_value(self, hand):
+        """Calculates the value of player and dealer hand. Ends the game at or over 21 points
+        
+        Args:
+            self (GameView): an instance of GameView.
+            hand (String): keeps track of player and dealer
+        """
         global FACE_CARDS
         #could refactor the 2 hand possiblities into methods of a Dealer and Player Class
         if hand == "player":
@@ -167,6 +187,12 @@ class GameView(arcade.View):
         
 
     def hit(self, hand):
+        """Draws a card for the player's hand and the dealers hand
+        
+        Args:
+            self (GameView): an instance of GameView.
+            hand (String): keeps track of player and dealer
+        """
         if hand == "player":
             self.player_hand.append(self.cards_list[self.top_card_int])
             self.calculate_value("player")
@@ -178,6 +204,11 @@ class GameView(arcade.View):
 
 
     def double_down(self):
+        """Doubles the bet and draws a card for the player
+        
+        Args:
+            self (GameView): an instance of GameView.
+        """
         global chips
         chips -= 100
         self.bet += 100
@@ -185,9 +216,19 @@ class GameView(arcade.View):
         self.endgame()
 
     def stand(self):
+        """Ends the game when the player has draw as many cards as they want
+        
+        Args:
+            self (GameView): an instance of GameView.
+        """
         self.endgame()
 
     def player_win(self):
+        """If the player wins give them chips
+        
+        Args:
+            self (GameView): an instance of GameView.
+        """
         global chips
         if self.blackjack:
             chips += (self.bet * 2.5)
@@ -196,9 +237,19 @@ class GameView(arcade.View):
         self.victory = True
 
     def player_lose(self):
+        """if the player loses set self.defeat to true
+        
+        Args:
+            self (GameView): an instance of GameView.
+        """
         self.defeat = True
 
     def endgame(self):
+        """Ends the game - is called when the player chooses to 'stand'
+        
+        Args:
+            self (GameView): an instance of GameView.
+        """
         #reveals the dealer's first card then the dealer hits until the dealer's hand's value is above 16
         self.dealer_hand[0].face_up()
         if self.dealer_hand[0].value in FACE_CARDS:
@@ -233,6 +284,11 @@ class GameView(arcade.View):
         
     
     def on_draw(self):
+        """draws text, gif, and victory & loss screens.
+        
+        Args:
+            self (GameView): an instance of GameView.
+        """
         arcade.start_render()
         arcade.set_background_color(arcade.get_four_byte_color([11,15,19]))
         if self.time < 900:
@@ -268,12 +324,24 @@ class GameView(arcade.View):
             
     
     def on_update(self, delta_time): 
+        """Updates the gif if self.time is less than or equal to 900
+        
+        Args:
+            self (GameView): an instance of GameView.
+            delta_time (time): calls this function every 1/60th of a second
+        """
         self.time += 1
         if self.time <= 900:
             self.gif.update_animation()
 
 
     def update_card_positions(self):
+        """Puts cards in the correct location on the screen
+        
+        Args:
+            self (GameView): an instance of GameView.
+            hand (String): keeps track of player and dealer
+        """
         dealer_y = 350
         player_y = 150
         x_position = 100
@@ -289,6 +357,13 @@ class GameView(arcade.View):
 
 
     def on_key_press(self, symbol: int, modifiers: int):
+        """Controls the sequence of play.
+        
+        Args:
+            self (GameView): an instance of GameView.
+            symbol (int): this takes user input
+            modifiers (int): this takes user input
+        """
         audio_name = arcade.sound.load_sound(":resources:sounds/laser1.wav")
         audio_name_three = arcade.sound.load_sound(":resources:sounds/rockHit2.wav")
         audio_name_four = arcade.sound.load_sound(":resources:sounds/coin3.wav")
