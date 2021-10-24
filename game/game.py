@@ -9,6 +9,7 @@ from .menu_view import MenuView
 class Game(arcade.Window):
     def __init__(self, width, height, title):
         super().__init__(width, height, title)
+        self.yes = False
 
         self.menu_view = MenuView()
         self.continue_game_view = ContinueGameView()
