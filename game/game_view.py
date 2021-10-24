@@ -67,6 +67,11 @@ class GameView(arcade.View):
         self.continue_game_view = continue_game_view
         self.game_window = game_window
         
+        self.gif = arcade.load_animated_gif("game\penguin\card.gif")
+        self.gif.center_x = 400
+        self.gif.center_y = 300
+        self.time = 0
+        
         
 
     def setup_newgame(self):
@@ -75,11 +80,12 @@ class GameView(arcade.View):
             self.game_over = True
         chips -= 100
         self.bet = 100
-
+        
 
         self.cards_list = arcade.SpriteList()
 
         #resets on newgame
+        self.top_card_int = 0 ## this had to be moved here to make it so that you are not drawing over the 52 card limit
         self.player_hand = []
         self.dealer_hand = []
         self.player_value = 0
@@ -113,10 +119,6 @@ class GameView(arcade.View):
         self.hit("player")
         self.hit("dealer")
         self.hit("player")
-
-    
-
-
         self.update_card_positions()
         
     def calculate_value(self, hand):
@@ -226,42 +228,49 @@ class GameView(arcade.View):
         else:
             self.player_lose()
         
-        
     
 
         
     
     def on_draw(self):
-        global chips
         arcade.start_render()
-        arcade.set_background_color(arcade.color.AMAZON)
-        arcade.draw_text("Blackjack", 65, 550, arcade.color.BLACK, 16)
-        arcade.draw_text(f"Chips: {int(chips)}", 265, 550, arcade.color.BLACK, 16)
-        arcade.draw_text("[H] = Hit    [D] = Double Down    [S] = Stand    [Q] = Quit Game", 65, 525, arcade.color.BLACK, 16)
-        arcade.draw_text("Dealer's Hand", 80, 450, arcade.color.BLACK, 16)
-        arcade.draw_text("Player's Hand", 80, 250, arcade.color.BLACK, 16)
-        arcade.draw_text(f"Value: {self.dealer_value}", 280, 450, arcade.color.BLACK, 16)
-        arcade.draw_text(f"Value: {self.player_value}", 280, 250, arcade.color.BLACK, 16)
+        arcade.set_background_color(arcade.get_four_byte_color([11,15,19]))
+        if self.time < 900:
+            self.gif.draw()
+        if self.time >= 900:
+            global chips
+            arcade.set_background_color(arcade.color.AMAZON)
+            arcade.draw_text("Blackjack", 65, 550, arcade.color.BLACK, 16)
+            arcade.draw_text(f"Chips: {int(chips)}", 265, 550, arcade.color.BLACK, 16)
+            arcade.draw_text("[H] = Hit    [D] = Double Down    [S] = Stand    [Q] = Quit Game", 65, 525, arcade.color.BLACK, 16)
+            arcade.draw_text("Dealer's Hand", 80, 450, arcade.color.BLACK, 16)
+            arcade.draw_text("Player's Hand", 80, 250, arcade.color.BLACK, 16)
+            arcade.draw_text(f"Value: {self.dealer_value}", 280, 450, arcade.color.BLACK, 16)
+            arcade.draw_text(f"Value: {self.player_value}", 280, 250, arcade.color.BLACK, 16)
 
-        if self.blackjack:
-            arcade.draw_text("Blackjack!", 480, 250, arcade.color.BLACK, 16)
-        if self.victory:
-            self.continue_game_view.set_victory(self.victory)
-            self.game_window.show_view(self.continue_game_view)
-        elif self.defeat:
-            self.continue_game_view.set_defeat(self.defeat)
-            self.game_window.show_view(self.continue_game_view)
-        if self.game_over:
-            self.continue_game_view.set_game_over(self.game_over)
-            self.game_window.show_view(self.continue_game_view)
+            if self.blackjack:
+                arcade.draw_text("Blackjack!", 480, 250, arcade.color.BLACK, 16)
+            if self.victory:
+                self.continue_game_view.set_victory(self.victory)
+                self.game_window.show_view(self.continue_game_view)
+            elif self.defeat:
+                self.continue_game_view.set_defeat(self.defeat)
+                self.game_window.show_view(self.continue_game_view)
+            if self.game_over:
+                self.continue_game_view.set_game_over(self.game_over)
+                self.game_window.show_view(self.continue_game_view)
 
-       
-        for i in self.dealer_hand:
-            i.draw()
-        for j in self.player_hand:
-            j.draw()
         
-
+            for i in self.dealer_hand:
+                i.draw()
+            for j in self.player_hand:
+                j.draw()
+            
+    
+    def on_update(self, delta_time): 
+        self.time += 1
+        if self.time <= 900:
+            self.gif.update_animation()
 
 
     def update_card_positions(self):
@@ -299,8 +308,3 @@ class GameView(arcade.View):
             # Stand
             arcade.sound.play_sound(audio_name_five)
             self.stand()
-
-
-        
-
-
