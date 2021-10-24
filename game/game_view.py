@@ -1,9 +1,12 @@
 import arcade
 from .card import Card
 import random
+from .continue_game_view import ContinueGameView
 import sys
 
 # Constants for sizing
+
+
 CARD_SCALE = 0.6
 
 # How big are the cards?
@@ -42,7 +45,8 @@ chips = 1000
 
 
 class GameView(arcade.View):
-    def __init__(self, gameWindow):
+
+    def __init__(self, continue_game_view, game_window):
         super().__init__()
         #self.cards_list = None
         self.cards_list = []
@@ -60,7 +64,8 @@ class GameView(arcade.View):
         self.defeat = False
         self.game_over = False
         self.setup_newgame()
-        self.gameWindow = gameWindow
+        self.continue_game_view = continue_game_view
+        self.game_window = game_window
         
         
 
@@ -241,14 +246,14 @@ class GameView(arcade.View):
         if self.blackjack:
             arcade.draw_text("Blackjack!", 480, 250, arcade.color.BLACK, 16)
         if self.victory:
-            arcade.draw_text("You Won", 65, 525, arcade.color.BLUE, 64)
-            arcade.draw_text("Would you like to play again? [Y/N]", 65, 425, arcade.color.BLUE, 24)
+            self.continue_game_view.set_victory(self.victory)
+            self.game_window.show_view(self.continue_game_view)
         elif self.defeat:
-            arcade.draw_text("You Lost", 65, 525, arcade.color.RED, 64)
-            arcade.draw_text("Would you like to play again? [Y/N]", 65, 425, arcade.color.RED, 24)
+            self.continue_game_view.set_defeat(self.defeat)
+            self.game_window.show_view(self.continue_game_view)
         if self.game_over:
-            arcade.draw_text("All out of Chips", 65, 525, arcade.color.BLACK, 64)
-            arcade.draw_text("Press [Q] to quit game, (in shame)", 65, 425, arcade.color.BLACK, 24)
+            self.continue_game_view.set_game_over(self.game_over)
+            self.game_window.show_view(self.continue_game_view)
 
        
         for i in self.dealer_hand:
@@ -297,21 +302,6 @@ class GameView(arcade.View):
             print("'S' key pressed")
             arcade.sound.play_sound(audio_name_five)
             self.stand()
-
-        elif symbol == arcade.key.Y and (self.victory or self.defeat):
-            # Restart
-            print("'Y' key pressed")
-            arcade.sound.play_sound(audio_name)
-            self.setup_newgame()
-    
-        elif symbol == arcade.key.N and (self.victory or self.defeat):
-            # Quit
-            print("'N' key pressed")
-            self.gameWindow.close()
-    
-        elif symbol == arcade.key.Q:
-            print("'N' key pressed")
-            self.gameWindow.close()
 
 
         
