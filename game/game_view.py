@@ -287,19 +287,16 @@ class GameView(arcade.View):
 
         if symbol == arcade.key.H and not self.game_over:
             # Hit
-            print("'H' key pressed")
             arcade.sound.play_sound(audio_name_three)
             self.hit("player")
 
         elif symbol == arcade.key.D and not self.game_over:
             # Double Down
-            print("'D' key pressed")
             arcade.sound.play_sound(audio_name_four)
             self.double_down()
 
         elif symbol == arcade.key.S and not self.game_over:
             # Stand
-            print("'S' key pressed")
             arcade.sound.play_sound(audio_name_five)
             self.stand()
 
