@@ -55,6 +55,7 @@ class Game(arcade.Window):
             # Restart
             arcade.sound.play_sound(self.audio_name)
             self.hide_view()
+            self.continue_game_view.victory = False
             self.show_view(self.game_view)
             self.game_view.setup_newgame()
 
