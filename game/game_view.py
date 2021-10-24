@@ -61,8 +61,10 @@ class GameView(arcade.View):
         self.game_over = False
         self.setup_newgame()
         self.gameWindow = gameWindow
-        
-        
+        self.gif = arcade.load_animated_gif("game\penguin\card.gif")
+        self.gif.center_x = 400
+        self.gif.center_y = 300
+        self.time = 0
 
     def setup_newgame(self):
         global chips
@@ -230,34 +232,42 @@ class GameView(arcade.View):
     def on_draw(self):
         global chips
         arcade.start_render()
-        arcade.set_background_color(arcade.color.AMAZON)
-        arcade.draw_text("Blackjack", 65, 550, arcade.color.BLACK, 16)
-        arcade.draw_text(f"Chips: {int(chips)}", 265, 550, arcade.color.BLACK, 16)
-        arcade.draw_text("[H] = Hit    [D] = Double Down    [S] = Stand    [Q] = Quit Game", 65, 525, arcade.color.BLACK, 16)
-        arcade.draw_text("Dealer's Hand", 80, 450, arcade.color.BLACK, 16)
-        arcade.draw_text("Player's Hand", 80, 250, arcade.color.BLACK, 16)
-        arcade.draw_text(f"Value: {self.dealer_value}", 280, 450, arcade.color.BLACK, 16)
-        arcade.draw_text(f"Value: {self.player_value}", 280, 250, arcade.color.BLACK, 16)
+        arcade.set_background_color(arcade.get_four_byte_color([11,15,19]))
+        if self.time < 900:
+            self.gif.draw()
+        if self.time >= 900:
+            arcade.set_background_color(arcade.color.AMAZON)
+            arcade.draw_text("Blackjack", 65, 550, arcade.color.BLACK, 16)
+            arcade.draw_text(f"Chips: {int(chips)}", 265, 550, arcade.color.BLACK, 16)
+            arcade.draw_text("[H] = Hit    [D] = Double Down    [S] = Stand    [Q] = Quit Game", 65, 525, arcade.color.BLACK, 16)
+            arcade.draw_text("Dealer's Hand", 80, 450, arcade.color.BLACK, 16)
+            arcade.draw_text("Player's Hand", 80, 250, arcade.color.BLACK, 16)
+            arcade.draw_text(f"Value: {self.dealer_value}", 280, 450, arcade.color.BLACK, 16)
+            arcade.draw_text(f"Value: {self.player_value}", 280, 250, arcade.color.BLACK, 16)
 
-        if self.blackjack:
-            arcade.draw_text("Blackjack!", 480, 250, arcade.color.BLACK, 16)
-        if self.victory:
-            arcade.draw_text("You Won", 65, 525, arcade.color.BLUE, 64)
-            arcade.draw_text("Would you like to play again? [Y/N]", 65, 425, arcade.color.BLUE, 24)
-        elif self.defeat:
-            arcade.draw_text("You Lost", 65, 525, arcade.color.RED, 64)
-            arcade.draw_text("Would you like to play again? [Y/N]", 65, 425, arcade.color.RED, 24)
-        if self.game_over:
-            arcade.draw_text("All out of Chips", 65, 525, arcade.color.BLACK, 64)
-            arcade.draw_text("Press [Q] to quit game, (in shame)", 65, 425, arcade.color.BLACK, 24)
+            if self.blackjack:
+                arcade.draw_text("Blackjack!", 480, 250, arcade.color.BLACK, 16)
+            if self.victory:
+                arcade.draw_text("You Won", 65, 525, arcade.color.BLUE, 64)
+                arcade.draw_text("Would you like to play again? [Y/N]", 65, 425, arcade.color.BLUE, 24)
+            elif self.defeat:
+                arcade.draw_text("You Lost", 65, 525, arcade.color.RED, 64)
+                arcade.draw_text("Would you like to play again? [Y/N]", 65, 425, arcade.color.RED, 24)
+            if self.game_over:
+                arcade.draw_text("All out of Chips", 65, 525, arcade.color.BLACK, 64)
+                arcade.draw_text("Press [Q] to quit game, (in shame)", 65, 425, arcade.color.BLACK, 24)
 
-       
-        for i in self.dealer_hand:
-            i.draw()
-        for j in self.player_hand:
-            j.draw()
         
-
+            for i in self.dealer_hand:
+                i.draw()
+            for j in self.player_hand:
+                j.draw()
+            
+    
+    def on_update(self, delta_time): 
+        self.time += 1
+        if self.time <= 900:
+            self.gif.update_animation()
 
 
     def update_card_positions(self):
