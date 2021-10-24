@@ -64,12 +64,13 @@ class GameView(arcade.View):
         self.defeat = False
         self.game_over = False
         self.setup_newgame()
+        self.continue_game_view = continue_game_view
+        self.game_window = game_window
+        
         self.gif = arcade.load_animated_gif("game\penguin\card.gif")
         self.gif.center_x = 400
         self.gif.center_y = 300
         self.time = 0
-        self.continue_game_view = continue_game_view
-        self.game_window = game_window
         
         
 
@@ -118,10 +119,6 @@ class GameView(arcade.View):
         self.hit("player")
         self.hit("dealer")
         self.hit("player")
-
-    
-
-
         self.update_card_positions()
         
     def calculate_value(self, hand):
@@ -231,18 +228,17 @@ class GameView(arcade.View):
         else:
             self.player_lose()
         
-        
     
 
         
     
     def on_draw(self):
-        global chips
         arcade.start_render()
         arcade.set_background_color(arcade.get_four_byte_color([11,15,19]))
         if self.time < 900:
             self.gif.draw()
         if self.time >= 900:
+            global chips
             arcade.set_background_color(arcade.color.AMAZON)
             arcade.draw_text("Blackjack", 65, 550, arcade.color.BLACK, 16)
             arcade.draw_text(f"Chips: {int(chips)}", 265, 550, arcade.color.BLACK, 16)
@@ -255,32 +251,15 @@ class GameView(arcade.View):
             if self.blackjack:
                 arcade.draw_text("Blackjack!", 480, 250, arcade.color.BLACK, 16)
             if self.victory:
-                arcade.draw_text("You Won", 65, 525, arcade.color.BLUE, 64)
-                arcade.draw_text("Would you like to play again? [Y/N]", 65, 425, arcade.color.BLUE, 24)
+                self.continue_game_view.set_victory(self.victory)
+                self.game_window.show_view(self.continue_game_view)
             elif self.defeat:
-                arcade.draw_text("You Lost", 65, 525, arcade.color.RED, 64)
-                arcade.draw_text("Would you like to play again? [Y/N]", 65, 425, arcade.color.RED, 24)
+                self.continue_game_view.set_defeat(self.defeat)
+                self.game_window.show_view(self.continue_game_view)
             if self.game_over:
-                arcade.draw_text("All out of Chips", 65, 525, arcade.color.BLACK, 64)
-                arcade.draw_text("Press [Q] to quit game, (in shame)", 65, 425, arcade.color.BLACK, 24)
+                self.continue_game_view.set_game_over(self.game_over)
+                self.game_window.show_view(self.continue_game_view)
 
-        if self.blackjack:
-            arcade.draw_text("Blackjack!", 480, 250, arcade.color.BLACK, 16)
-        if self.victory:
-            self.continue_game_view.set_victory(self.victory)
-            self.game_window.show_view(self.continue_game_view)
-        elif self.defeat:
-            self.continue_game_view.set_defeat(self.defeat)
-            self.game_window.show_view(self.continue_game_view)
-        if self.game_over:
-            self.continue_game_view.set_game_over(self.game_over)
-            self.game_window.show_view(self.continue_game_view)
-
-       
-        for i in self.dealer_hand:
-            i.draw()
-        for j in self.player_hand:
-            j.draw()
         
             for i in self.dealer_hand:
                 i.draw()
@@ -329,8 +308,3 @@ class GameView(arcade.View):
             # Stand
             arcade.sound.play_sound(audio_name_five)
             self.stand()
-
-
-        
-
-
