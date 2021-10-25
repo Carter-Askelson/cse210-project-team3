@@ -2,6 +2,9 @@ import arcade
 
 
 class GameRulesView(arcade.View):
+    """Responsible for educating the player about Blackjack
+
+    """
     def __init__(self):
         """Initializer; uses inheritance for arcade.View
         
