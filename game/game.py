@@ -101,7 +101,7 @@ class Game(arcade.Window):
             self.hide_view()
             self.show_view(self.menu_view)
 
-        elif symbol == arcade.key.N and (self.game_view.victory or self.game_view.defeat):
+        elif symbol == arcade.key.N and (self.game_view.victory or self.game_view.defeat) or (symbol == arcade.key.N and ((self.two_player_game_view.victory1 or self.two_player_game_view.victory2 or self.two_player_game_view.both_victory or self.two_player_game_view.defeat) and self.two_player)):
             # Quit
             self.close()
 

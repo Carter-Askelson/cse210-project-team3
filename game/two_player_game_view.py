@@ -85,6 +85,7 @@ class TwoPlayer_GameView(arcade.View):
         self.defeat = False
         self.game_over1 = False
         self.game_over2 = False
+        self.round_finish = False
         self.setup_newgame()
         self.two_player_continue_game_view = TwoPlayerContinueGameView
         self.game_window = game_window
@@ -143,6 +144,7 @@ class TwoPlayer_GameView(arcade.View):
         self.victory2 = False
         self.both_victory = False
         self.defeat = False
+        self.round_finish = False
         
         #creates deck
         for card_suit in CARD_SUITS:
@@ -165,7 +167,9 @@ class TwoPlayer_GameView(arcade.View):
         self.update_card_positions()
         if self.player1_value != 21:
             self.turn1 = True
+            self.turn2 = False
         elif self.player2_value != 21:
+            self.turn1 = False
             self.turn2 = True
         else:
             self.endgame()
@@ -194,11 +198,14 @@ class TwoPlayer_GameView(arcade.View):
                     self.player1_value -= 10
                     self.player1_almost_bust += 1
                 else:
-                    self.player1_bust = True
                     self.player_lose(1)
-            if self.player1_value == 21:
+                    self.switch_turn()
+                    
+            elif self.player1_value == 21:
                 self.blackjack1 = True
                 self.stand("player1")
+            else:
+                self.switch_turn()
 
         elif hand == "player2":
             if self.player2_hand[-1].value in FACE_CARDS:
@@ -215,12 +222,14 @@ class TwoPlayer_GameView(arcade.View):
                     self.player2_value -= 10
                     self.player2_almost_bust += 1
                 else:
-                    self.player2_bust = True
                     self.player_lose(2)
+                    self.switch_turn()
                 
-            if self.player2_value == 21:
+            elif self.player2_value == 21:
                 self.blackjack2 = True
                 self.stand("player2")
+            else:
+                self.switch_turn()
 
         elif hand == "dealer":
             if len(self.dealer_hand) > 1:
@@ -238,6 +247,7 @@ class TwoPlayer_GameView(arcade.View):
                         self.dealer_value -= 10
                         self.dealer_almost_bust += 1
                     else:
+                        self.round_finish = True
                         if self.player1_bust:
                             self.player2_win()
                         elif self.player2_bust:
@@ -245,7 +255,7 @@ class TwoPlayer_GameView(arcade.View):
                         else:
                             self.players_win()
                 elif self.dealer_value == 21:
-                    self.player_lose(0)
+                    self.defeat = True
 
         
 
@@ -259,11 +269,11 @@ class TwoPlayer_GameView(arcade.View):
         if hand == "player1":
             self.player1_hand.append(self.cards_list[self.top_card_int])
             self.calculate_value("player1")
-            self.switch_turn()
+            
         elif hand == "player2":
             self.player2_hand.append(self.cards_list[self.top_card_int])
             self.calculate_value("player2")
-            self.switch_turn()
+            
         elif hand == "dealer":
             self.dealer_hand.append(self.cards_list[self.top_card_int])
             self.calculate_value("dealer")
@@ -284,10 +294,8 @@ class TwoPlayer_GameView(arcade.View):
             self.skip1 = True
             self.hit("player1")
             self.stand("player1")
-            self.turn1 = False
-            self.turn2 = True
-            if self.skip2:
-                self.endgame()
+            if self.player1_bust == False:
+                self.stand("player1")
             
         elif player == "player2":
             global chips2
@@ -295,11 +303,8 @@ class TwoPlayer_GameView(arcade.View):
             self.bet2 += 100
             self.skip2 = True
             self.hit("player2")
-            self.stand("player2")
-            self.turn1 = True
-            self.turn2 = False
-            if self.skip1:
-                self.endgame()
+            if self.player2_bust == False:
+                self.stand("player2")
             
 
     def stand(self, player):
@@ -311,13 +316,9 @@ class TwoPlayer_GameView(arcade.View):
         if player == "player1":
             self.skip1 = True
             self.switch_turn()
-            if self.skip2:
-                self.endgame()
         elif player == "player2":
             self.skip2 = True
             self.switch_turn()
-            if self.skip1:
-                self.endgame()
 
     def switch_turn(self):
         """Makes is so the proper player has the next move
@@ -325,22 +326,20 @@ class TwoPlayer_GameView(arcade.View):
         Args:
             self (GameView): an instance of GameView.
         """
-        if self.turn1:
-            if self.skip2:
-                pass
-            elif self.player1_bust == False:
+        if self.skip1 == True and self.skip2 == True:
+            self.turn1 = False
+            self.turn2 = False
+            self.endgame()
+
+        elif self.turn1:
+            if self.skip2 == False:
                 self.turn1 = False
                 self.turn2 = True
-            else:
-                self.endgame()
+            
         elif self.turn2:
-            if self.skip1:
-                pass
-            elif self.player2_bust == False:
+            if self.skip1  == False:
                 self.turn1 = True
                 self.turn2 = False
-            else:
-                self.endgame()
 
 
     def player1_win(self):
@@ -399,11 +398,14 @@ class TwoPlayer_GameView(arcade.View):
         """
 
         if player == 1:
+            self.player1_bust = True
             self.skip1 = True
         elif player == 2:
+            self.player2_bust = True
             self.skip2 = True
-        if (self.skip1 and self.skip2) or player == 0:
+        if self.player1_bust == True and self.player2_bust == True:
             self.defeat = True
+            
         
 
     def endgame(self):
@@ -428,22 +430,26 @@ class TwoPlayer_GameView(arcade.View):
                 self.dealer_value -= 10
                 self.dealer_almost_bust += 1
             else:
+                self.round_finish = True
                 self.players_win()
         #House always wins Ties
-        elif self.dealer_value == 21:
-            self.player_lose(0)
+        if self.dealer_value == 21:
+            self.round_finish = True
+            self.defeat = True
 
         while self.dealer_value < 17:
                 self.hit("dealer")
 
-        if (self.player1_value - self.dealer_value) > 0 and (self.player2_value - self.dealer_value) > 0 and self.player1_bust == False and self.player2_bust == False:
-           self.players_win()
-        elif (self.player1_value - self.dealer_value) > 0 and self.player1_bust == False:
-           self.player1_win()
-        elif (self.player2_value - self.dealer_value) > 0 and self.player2_bust == False:
-           self.player2_win()
-        else:
-            self.player_lose(0)
+        if self.round_finish == False:
+            if (self.player1_value - self.dealer_value) > 0 and (self.player2_value - self.dealer_value) > 0 and self.player1_bust == False and self.player2_bust == False:
+                self.players_win()
+            elif (self.player1_value - self.dealer_value) > 0 and self.player1_bust == False:
+                self.player1_win()
+            elif (self.player2_value - self.dealer_value) > 0 and self.player2_bust == False:
+                self.player2_win()
+            else:
+                self.defeat = True
+            self.round_finish = True
         
     
 
