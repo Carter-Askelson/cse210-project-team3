@@ -2,7 +2,9 @@ import arcade
 
 
 class MenuView(arcade.View):
-
+    """Responsible for the main menu of the game. User interacts with this menu
+    to learn about Blackjack or play a game of Blackjack.
+    """
     def on_show(self):
         arcade.set_background_color(arcade.color.AMAZON)
         self.gif = arcade.load_animated_gif("game\penguin\penguin2.gif")

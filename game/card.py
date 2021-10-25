@@ -3,7 +3,13 @@ import arcade
 
 
 class Card(arcade.Sprite):
-    """ Card sprite """
+    """Represents a card within the Blackjack game.
+
+    Attribute:
+        suit (int): determines the suit of the card
+        value (int): card number
+        scale (int): size of the card
+    """
 
     def __init__(self, suit, value, scale=1):
         """Initializes attributes and uses inheritance for arcade.Sprite

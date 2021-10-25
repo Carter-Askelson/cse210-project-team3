@@ -2,6 +2,14 @@ import arcade
 
 
 class ContinueGameView(arcade.View):
+    """Responsible for letting the use continue to play another game or quit the game all together
+
+    Attributes:
+        window_width (int): defines the width of the view.
+        victory (bool): used to know if the player won the current game or not.
+        defeat(bool): used to know if the player lost the current game or not.
+        game_over(bool): used to know if the player ran out of chips in the current game.
+    """
 
     def __init__(self, victory=False, defeat=False, game_over=False):
         """Initializer; uses inheritance for arcade.View
