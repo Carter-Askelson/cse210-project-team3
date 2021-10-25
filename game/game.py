@@ -4,6 +4,8 @@ from .continue_game_view import ContinueGameView
 from .game_rules_view import GameRulesView
 from .game_view import GameView
 from .menu_view import MenuView
+from .two_player_game_view import TwoPlayer_GameView
+from .two_player_continue_game_view import TwoPlayerContinueGameView
 
 
 class Game(arcade.Window):
@@ -36,7 +38,9 @@ class Game(arcade.Window):
 
         self.menu_view = MenuView()
         self.continue_game_view = ContinueGameView()
+        self.two_player_continue_game_view = TwoPlayerContinueGameView()
         self.game_view = GameView(self.continue_game_view, self)
+        self.two_player_game_view = TwoPlayer_GameView(self.two_player_continue_game_view, self)
         self.game_rules_view = GameRulesView()
         self.audio_name = arcade.sound.load_sound(":resources:sounds/laser1.wav")
         self.audio_name_two = arcade.sound.load_sound(":resources:sounds/hurt2.wav")
@@ -45,6 +49,8 @@ class Game(arcade.Window):
         self.audio_name_four = arcade.sound.load_sound(":resources:sounds/coin3.wav")
         self.audio_name_five = arcade.sound.load_sound(":resources:sounds/coin4.wav")
         self.ingame = False
+        self.one_player = False
+        self.two_player = False
 
 
     def start_game(self):
@@ -77,7 +83,14 @@ class Game(arcade.Window):
             arcade.sound.play_sound(self.audio_name)
             self.show_view(self.game_view)
             self.ingame = True
+            self.one_player = True
 
+        elif symbol == arcade.key.T:
+            # Go to game window
+            arcade.sound.play_sound(self.audio_name)
+            self.show_view(self.two_player_game_view)
+            self.ingame = True
+            self.two_player = True
 
         elif symbol == arcade.key.L:
             # Go to game rules window
@@ -92,13 +105,23 @@ class Game(arcade.Window):
             # Quit
             self.close()
 
-        elif symbol == arcade.key.Y and (self.game_view.victory or self.game_view.defeat):
+        elif symbol == arcade.key.Y and (self.game_view.victory or self.game_view.defeat) and self.one_player:
             # Restart
             arcade.sound.play_sound(self.audio_name)
             self.hide_view()
             self.continue_game_view.victory = False
             self.show_view(self.game_view)
             self.game_view.setup_newgame()
+
+        elif symbol == arcade.key.Y and (self.two_player_game_view.victory1 or self.two_player_game_view.victory2 or self.two_player_game_view.both_victory or self.two_player_game_view.defeat) and self.two_player:
+            # Restart
+            arcade.sound.play_sound(self.audio_name)
+            self.hide_view()
+            self.two_player_continue_game_view.victory1 = False
+            self.two_player_continue_game_view.victory2 = False
+            self.two_player_continue_game_view.both_victory = False
+            self.show_view(self.two_player_game_view)
+            self.two_player_game_view.setup_newgame()
 
         elif symbol == arcade.key.Q:
             self.close()
