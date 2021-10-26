@@ -306,15 +306,16 @@ class GameView(arcade.View):
 
             if self.blackjack:
                 arcade.draw_text("Blackjack!", 480, 250, arcade.color.BLACK, 16)
-            if self.victory:
+            if self.game_over:
+                self.continue_game_view.set_game_over(self.game_over)
+                self.game_window.show_view(self.continue_game_view)
+            elif self.victory:
                 self.continue_game_view.set_victory(self.victory)
                 self.game_window.show_view(self.continue_game_view)
             elif self.defeat:
                 self.continue_game_view.set_defeat(self.defeat)
                 self.game_window.show_view(self.continue_game_view)
-            if self.game_over:
-                self.continue_game_view.set_game_over(self.game_over)
-                self.game_window.show_view(self.continue_game_view)
+            
 
         
             for i in self.dealer_hand:

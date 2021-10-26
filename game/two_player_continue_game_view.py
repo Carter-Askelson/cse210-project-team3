@@ -96,7 +96,18 @@ class TwoPlayerContinueGameView(arcade.View):
         """
         arcade.start_render()
 
-        if self.victory1:
+        if self.game_over1:
+            arcade.draw_text("Player 1 ran out of Chips", self.window_width / 2, self.window_width / 2, arcade.color.BLACK, 64,
+                             anchor_x="center")
+            arcade.draw_text("Press [Q] to quit game, (Player 2 Wins!)", self.window_width / 2, self.window_width / 2 - 75,
+                             arcade.color.BLACK, 24, anchor_x="center")
+        elif self.game_over2:
+            arcade.draw_text("Player 2 ran out of Chips", self.window_width / 2, self.window_width / 2, arcade.color.BLACK, 64,
+                             anchor_x="center")
+            arcade.draw_text("Press [Q] to quit game, (Player 1 Wins!)", self.window_width / 2, self.window_width / 2 - 75,
+                             arcade.color.BLACK, 24, anchor_x="center")
+
+        elif self.victory1:
             arcade.draw_text("Player 1 Won", self.window_width / 2, self.window_width / 2, arcade.color.BLUE, 64,
                              anchor_x="center")
             arcade.draw_text("Would you like to play again? [Y/N]", self.window_width / 2, self.window_width / 2 - 75,
@@ -116,13 +127,4 @@ class TwoPlayerContinueGameView(arcade.View):
                              anchor_x="center")
             arcade.draw_text("Would you like to play again? [Y/N]", self.window_width / 2, self.window_width / 2 - 75,
                              arcade.color.RED, 24, anchor_x="center")
-        if self.game_over1:
-            arcade.draw_text("Player 1 ran out of Chips", self.window_width / 2, self.window_width / 2, arcade.color.BLACK, 64,
-                             anchor_x="center")
-            arcade.draw_text("Press [Q] to quit game, (Player 2 Wins!)", self.window_width / 2, self.window_width / 2 - 75,
-                             arcade.color.BLACK, 24, anchor_x="center")
-        elif self.game_over2:
-            arcade.draw_text("Player 2 ran out of Chips", self.window_width / 2, self.window_width / 2, arcade.color.BLACK, 64,
-                             anchor_x="center")
-            arcade.draw_text("Press [Q] to quit game, (Player 1 Wins!)", self.window_width / 2, self.window_width / 2 - 75,
-                             arcade.color.BLACK, 24, anchor_x="center")
+        

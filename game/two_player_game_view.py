@@ -201,10 +201,10 @@ class TwoPlayer_GameView(arcade.View):
                     self.player_lose(1)
                     self.switch_turn()
                     
-            elif self.player1_value == 21:
+            if self.player1_value == 21:
                 self.blackjack1 = True
                 self.stand("player1")
-            else:
+            elif self.player1_bust == False:
                 self.switch_turn()
 
         elif hand == "player2":
@@ -225,10 +225,10 @@ class TwoPlayer_GameView(arcade.View):
                     self.player_lose(2)
                     self.switch_turn()
                 
-            elif self.player2_value == 21:
+            if self.player2_value == 21:
                 self.blackjack2 = True
                 self.stand("player2")
-            else:
+            elif self.player2_bust == False:
                 self.switch_turn()
 
         elif hand == "dealer":
@@ -348,6 +348,7 @@ class TwoPlayer_GameView(arcade.View):
         Args:
             self (GameView): an instance of GameView.
         """
+        ("player1 win")
         global chips1
         if self.blackjack1:
             chips1 += (self.bet1 * 2.5)
@@ -362,6 +363,7 @@ class TwoPlayer_GameView(arcade.View):
             self (GameView): an instance of GameView.
         """
         global chips2
+        print("player2 win")
         if self.blackjack2:
             chips2 += (self.bet2 * 2.5)
         else:
@@ -374,6 +376,7 @@ class TwoPlayer_GameView(arcade.View):
         Args:
             self (GameView): an instance of GameView.
         """
+        ("both players win")
         global chips1
         global chips2
         if self.blackjack1:
@@ -396,7 +399,7 @@ class TwoPlayer_GameView(arcade.View):
         Args:
             self (GameView): an instance of GameView.
         """
-
+        print("dealer wins")
         if player == 1:
             self.player1_bust = True
             self.skip1 = True
@@ -479,14 +482,22 @@ class TwoPlayer_GameView(arcade.View):
             arcade.draw_text(f"Value: {self.player1_value}", 280, 250, arcade.color.BLACK, 16)
             arcade.draw_text(f"Value: {self.player2_value}", 280, 50, arcade.color.BLACK, 16)
 
-            if self.turn1:
-                arcade.draw_text("Player 1 Turn", 145, 550, arcade.color.BLACK, 16)
-            elif self.turn2 == True:
-                arcade.draw_text("Player 2 Turn", 145, 550, arcade.color.BLACK, 16)
+            
             if self.blackjack1:
                 arcade.draw_text("Blackjack!", 480, 250, arcade.color.BLACK, 16)
             if self.blackjack2:
                 arcade.draw_text("Blackjack!", 480, 50, arcade.color.BLACK, 16)
+            if self.turn1:
+                arcade.draw_text("Player 1 Turn", 145, 550, arcade.color.BLACK, 16)
+            elif self.turn2 == True:
+                arcade.draw_text("Player 2 Turn", 145, 550, arcade.color.BLACK, 16)
+            
+            if self.game_over1:
+                self.two_player_continue_game_view.set_game_over1(self.game_over1)
+                self.game_window.show_view(self.two_player_continue_game_view)
+            elif self.game_over2:
+                self.two_player_continue_game_view.set_game_over2(self.game_over2)
+                self.game_window.show_view(self.two_player_continue_game_view)
             elif self.both_victory:
                 self.two_player_continue_game_view.set_both_victory(self.both_victory)
                 self.game_window.show_view(self.two_player_continue_game_view)
@@ -499,12 +510,7 @@ class TwoPlayer_GameView(arcade.View):
             elif self.defeat:
                 self.two_player_continue_game_view.set_defeat(self.defeat)
                 self.game_window.show_view(self.two_player_continue_game_view)
-            if self.game_over1:
-                self.two_player_continue_game_view.set_game_over(self.game_over1)
-                self.game_window.show_view(self.two_player_continue_game_view)
-            elif self.game_over2:
-                self.two_player_continue_game_view.set_game_over(self.game_over2)
-                self.game_window.show_view(self.two_player_continue_game_view)
+            
 
         
             for i in self.dealer_hand:
