@@ -18,7 +18,9 @@ class MenuView(arcade.View):
                          arcade.color.BLACK, font_size=30, anchor_x="center")
         arcade.draw_text("Press 'E' to enter into a game of Blackjack", 600 / 2, 600 / 2 - 75,
                          arcade.color.BLACK, font_size=20, anchor_x="center")
-        arcade.draw_text("Press 'L' to learn the rules of Blackjack", 600 / 2, 600 / 2 - 100,
+        arcade.draw_text("Press 'T' to enter a into 2 player game of Blackjack", 746 / 2, 600 / 2 - 100,
+                         arcade.color.BLACK, font_size=20, anchor_x="center")
+        arcade.draw_text("Press 'L' to learn the rules of Blackjack", 640 / 2, 600 / 2 - 125,
                          arcade.color.BLACK, font_size=20, anchor_x="center")
 
     def on_update(self, delta_time): 
