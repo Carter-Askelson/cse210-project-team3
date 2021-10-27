@@ -3,6 +3,8 @@ import arcade
 
 class GameRulesView(arcade.View):
     """Responsible for educating the player about Blackjack
+    
+        No attributes
 
     """
     def __init__(self):

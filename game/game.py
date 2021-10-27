@@ -26,7 +26,7 @@ class Game(arcade.Window):
         self.ingame (boolean): indicates wether the user is playing the game or not
     """
     def __init__(self, width, height, title):
-        """Initializes attributes
+        """Initializes attributes and inherits from arcade.Window
         
         Args:
             self (Game): an instance of Game.

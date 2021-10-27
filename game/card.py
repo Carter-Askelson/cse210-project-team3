@@ -5,10 +5,12 @@ import arcade
 class Card(arcade.Sprite):
     """Represents a card within the Blackjack game.
 
-    Attribute:
+    Attributes:
         suit (int): determines the suit of the card
         value (int): card number
-        scale (int): size of the card
+        face_down_image (img): image through arcade library
+        is_face_up (boolean): detect if card should be face up or not
+        texture (texture): arcade texture
     """
 
     def __init__(self, suit, value, scale=1):
