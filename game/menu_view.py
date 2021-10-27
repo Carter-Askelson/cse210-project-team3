@@ -1,14 +1,14 @@
 import arcade
-
+from pathlib import Path
 
 class MenuView(arcade.View):
     """Responsible for the main menu of the game. User interacts with this menu
     to learn about Blackjack or play a game of Blackjack.
-    
+
     """
     def on_show(self):
         arcade.set_background_color(arcade.color.AMAZON)
-        self.gif = arcade.load_animated_gif("game\penguin\penguin2.gif")
+        self.gif = arcade.load_animated_gif(Path(__file__).parent / "penguin" / "penguin2.gif")
         self.gif.center_x = 350
         self.gif.center_y = 350
 
