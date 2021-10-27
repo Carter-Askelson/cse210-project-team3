@@ -7,7 +7,7 @@ import sys
 # Constants for sizing
 
 
-CARD_SCALE = 0.6
+CARD_SCALE = 0.5
 
 # How big are the cards?
 CARD_WIDTH = 140 * CARD_SCALE
@@ -475,18 +475,18 @@ class TwoPlayer_GameView(arcade.View):
             arcade.draw_text(f"Player 1's Chips: {int(chips1)}", 310, 550, arcade.color.BLACK, 16)
             arcade.draw_text(f"Player 2's Chips: {int(chips2)}", 560, 550, arcade.color.BLACK, 16)
             arcade.draw_text("[H] = Hit    [D] = Double Down    [S] = Stand    [Q] = Quit Game", 65, 525, arcade.color.BLACK, 16)
-            arcade.draw_text("Dealer's Hand", 80, 450, arcade.color.BLACK, 16)
-            arcade.draw_text("Player 1's Hand", 80, 250, arcade.color.BLACK, 16)
-            arcade.draw_text("Player 2's Hand", 80, 50, arcade.color.BLACK, 16)
-            arcade.draw_text(f"Value: {self.dealer_value}", 280, 450, arcade.color.BLACK, 16)
-            arcade.draw_text(f"Value: {self.player1_value}", 280, 250, arcade.color.BLACK, 16)
-            arcade.draw_text(f"Value: {self.player2_value}", 280, 50, arcade.color.BLACK, 16)
+            arcade.draw_text("Dealer's Hand", 80, 475, arcade.color.BLACK, 16)
+            arcade.draw_text("Player 1's Hand", 80, 315, arcade.color.BLACK, 16)
+            arcade.draw_text("Player 2's Hand", 80, 155, arcade.color.BLACK, 16)
+            arcade.draw_text(f"Value: {self.dealer_value}", 280, 475, arcade.color.BLACK, 16)
+            arcade.draw_text(f"Value: {self.player1_value}", 280, 315, arcade.color.BLACK, 16)
+            arcade.draw_text(f"Value: {self.player2_value}", 280, 155, arcade.color.BLACK, 16)
 
             
             if self.blackjack1:
-                arcade.draw_text("Blackjack!", 480, 250, arcade.color.BLACK, 16)
+                arcade.draw_text("Blackjack!", 480, 315, arcade.color.BLACK, 16)
             if self.blackjack2:
-                arcade.draw_text("Blackjack!", 480, 50, arcade.color.BLACK, 16)
+                arcade.draw_text("Blackjack!", 480, 155, arcade.color.BLACK, 16)
             if self.turn1:
                 arcade.draw_text("Player 1 Turn", 145, 550, arcade.color.BLACK, 16)
             elif self.turn2 == True:
@@ -540,18 +540,18 @@ class TwoPlayer_GameView(arcade.View):
             self (GameView): an instance of GameView.
             hand (String): keeps track of player and dealer
         """
-        dealer_y = 350
-        player_y = 150
-        player_z = -50
-        x_position = 100
+        dealer_y = 400
+        player_y = 240
+        player_z = 80
+        x_position = 125
         for i in self.dealer_hand:
             i.position = (x_position, dealer_y)
             x_position += 100
-        x_position = 100
+        x_position = 125
         for j in self.player1_hand:
             j.position = (x_position, player_y)
             x_position += 100
-        x_position = 100
+        x_position = 125
         for k in self.player2_hand:
             k.position = (x_position, player_z)
             x_position += 100
