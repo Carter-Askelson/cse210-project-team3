@@ -48,6 +48,36 @@ placed_bet = False
 
 
 class GameView(arcade.View):
+    """Responsible for two-player game play; displays to user and takes key-inputs
+
+    Attributes:
+        self.cards_list (list): holds the deck
+        self.top_card_int (int): gets the next card to be drawn 
+        self.player_hand (list): player one's hand
+        self.dealer_value (int): the total value of the dealer's hand
+        self.player_value (int): the total value of the player's hand
+        self.player_ace_count (int): keeps track of player ace count
+        self.dealer_ace_count (int): ^
+        self.player_almost_bust (int): this is initialized at zero and is later added one to it's total 
+                                        if the user has an ace and their value is over 21 - it makes it so that the 
+                                        ace can change value to 1 from 11
+        self.dealer_almost_bust (int): ^
+        self.final_bet (int): user's final bet
+        self.blackjack (boolean): if the user hits blackjack
+        self.victory (boolean): if the user won
+        self.defeat (boolean): if the user lost
+        self.game_over (boolean): if the user ran out of chips
+        self.continue_game_view (ContinueGameView): an instance of ContinueGameView
+        self.game_window (game_window): an instance of game_window
+        self.bet (int): default bet
+
+        self.gif (arcade.gif): a gif played through arcade
+        self.gif.center_x (int): location of gif
+        self.gif.center_y (int): location of gif
+        self.time (int): doesn't let the gif repeat
+        
+
+    """
 
     def __init__(self, continue_game_view, game_window):
         """Initializes class attributes
@@ -371,6 +401,12 @@ class GameView(arcade.View):
 
 
     def on_decrease_bet(self, event):
+        """Decreases user bet
+        
+        Args:
+            self (GameView): an instance of GameView.
+            event (button): is called by button
+        """
         global chips
         if self.bet <= 50:
             self.bet = self.bet
@@ -378,6 +414,12 @@ class GameView(arcade.View):
             self.bet = self.bet - 50  
             chips = chips + 50 
     def on_increase_bet(self, event):
+        """increases user bet
+        
+        Args:
+            self (GameView): an instance of GameView.
+            event (button): is called by button
+        """
         global chips
         if self.bet < 1000:
             self.bet = self.bet + 50
@@ -386,6 +428,12 @@ class GameView(arcade.View):
             self.bet = self.bet
 
     def on_place_bet (self,event):
+        """Sets the user's bet and let's them view their cards after placing the bet
+        
+        Args:
+            self (GameView): an instance of GameView.
+            event (button): is called by button
+        """
         global placed_bet
         placed_bet = True
         arcade.draw_text(f"Value: {self.dealer_value}", 280, 450, arcade.color.BLACK, 16)

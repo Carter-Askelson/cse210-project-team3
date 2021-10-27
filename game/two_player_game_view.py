@@ -46,13 +46,52 @@ chips2 = 500
 
 
 class TwoPlayer_GameView(arcade.View):
+    """Responsible for two-player game play; displays to user and takes key-inputs
+
+    Attributes:
+        self.cards_list (list): holds the deck
+        self.top_card_int (int): gets the next card to be drawn 
+        self.player1_hand (list): player one's hand
+        self.player2_hand (list): player two's hand
+        self.dealer_value (int): the total value of the dealer's hand
+        self.player1_ace_count (int): keeps track of player ace count
+        self.player2_ace_count (int): ^
+        self.dealer_ace_count (int): ^
+        self.player1_almost_bust (int): this is initialized at zero and is later added one to it's total 
+                                        if the user has an ace and their value is over 21 - it makes it so that the 
+                                        ace can change value to 1 from 11
+        self.player2_almost_bust (int): ^
+        self.dealer_almost_bust (int): ^
+        self.player1_bust (boolean): Detect if player lost
+        self.player2_bust (boolean): ^
+        self.turn1 (boolean): Used to detect player turn order
+        self.turn2 (boolean): ^
+        self.skip1 (boolean): used to detect if turn play is over
+        self.skip2 (boolean): ^
+        self.blackjack (boolean): detect blackjack
+        self.victory1 (boolean): detect player win status
+        self.victory2 (boolean): ^
+        self.both_victory (boolean): detect if both players won
+        self.defeat (boolean): detects if players lost
+        self.game_over1 (boolean): Detects if player lost
+        self.game_over2 (boolean): ^
+        self.round_finish (boolean): Detect end of round
+        self.two_player_continue_game_view (TwoPlayerContinueGameView): an instance of TwoPlayerContinueGameView
+        self.game_window (game_window): an instance of game_window
+        self.gif (arcade.gif): a gif played through arcade
+        self.gif.center_x (int): location of gif
+        self.gif.center_y (int): location of gif
+        self.time (int): doesn't let the gif repeat
+        
+
+    """
 
     def __init__(self, TwoPlayerContinueGameView, game_window):
         """Initializes class attributes
         
         Args:
-            self (GameView): an instance of GameView.
-            continue_game_view (ContinueGameView): an instance of ContinueGameView
+            self (two_player_game_view): an instance of two_player_game_view.
+            TwoPlayerContinueGameView (TwoPlayerContinueGameView): an instance of TwoPlayerContinueGameView
             game_window (Game): an instance of Game
 
         """
@@ -101,7 +140,7 @@ class TwoPlayer_GameView(arcade.View):
         """Starts the game loop to control the sequence of play.
         
         Args:
-            self (GameView): an instance of GameView.
+            self (two_player_game_view): an instance of two_player_game_view.
 
         """
         global chips1
@@ -178,7 +217,7 @@ class TwoPlayer_GameView(arcade.View):
         """Calculates the value of player and dealer hand. Ends the game at or over 21 points
         
         Args:
-            self (GameView): an instance of GameView.
+            self (two_player_game_view): an instance of two_player_game_view.
             hand (String): keeps track of player and dealer
         """
         global FACE_CARDS
@@ -263,7 +302,7 @@ class TwoPlayer_GameView(arcade.View):
         """Draws a card for the player's hand and the dealers hand
         
         Args:
-            self (GameView): an instance of GameView.
+            self (two_player_game_view): an instance of two_player_game_view.
             hand (String): keeps track of player and dealer
         """
         if hand == "player1":
@@ -285,7 +324,8 @@ class TwoPlayer_GameView(arcade.View):
         """Doubles the bet and draws a card for the player, also double checks that the other player has the next turn
         
         Args:
-            self (GameView): an instance of GameView.
+            self (two_player_game_view): an instance of two_player_game_view.
+            player (String): get's the correct player
         """
         if player == "player1":
             global chips1
@@ -311,7 +351,9 @@ class TwoPlayer_GameView(arcade.View):
         """Ends the game when the player has draw as many cards as they want
         
         Args:
-            self (GameView): an instance of GameView.
+            self (two_player_game_view): an instance of two_player_game_view.
+            player (String): get's the correct player
+
         """
         if player == "player1":
             self.skip1 = True
@@ -324,7 +366,7 @@ class TwoPlayer_GameView(arcade.View):
         """Makes is so the proper player has the next move
         
         Args:
-            self (GameView): an instance of GameView.
+            self (two_player_game_view): an instance of two_player_game_view.
         """
         if self.skip1 == True and self.skip2 == True:
             self.turn1 = False
@@ -346,7 +388,7 @@ class TwoPlayer_GameView(arcade.View):
         """If the player wins give them chips
         
         Args:
-            self (GameView): an instance of GameView.
+            self (two_player_game_view): an instance of two_player_game_view.
         """
         ("player1 win")
         global chips1
@@ -360,7 +402,7 @@ class TwoPlayer_GameView(arcade.View):
         """If the player wins give them chips
         
         Args:
-            self (GameView): an instance of GameView.
+            self (two_player_game_view): an instance of two_player_game_view.
         """
         global chips2
         print("player2 win")
@@ -374,7 +416,7 @@ class TwoPlayer_GameView(arcade.View):
         """If the player wins give them chips
         
         Args:
-            self (GameView): an instance of GameView.
+            self (two_player_game_view): an instance of two_player_game_view.
         """
         ("both players win")
         global chips1
@@ -397,7 +439,9 @@ class TwoPlayer_GameView(arcade.View):
         """if the player loses set self.defeat to true
         
         Args:
-            self (GameView): an instance of GameView.
+            self (two_player_game_view): an instance of two_player_game_view.
+            player (String): get's the correct player
+
         """
         print("dealer wins")
         if player == 1:
@@ -415,7 +459,7 @@ class TwoPlayer_GameView(arcade.View):
         """Ends the game - is called when the player chooses to 'stand'
         
         Args:
-            self (GameView): an instance of GameView.
+            self (two_player_game_view): an instance of two_player_game_view.
         """
         #reveals the dealer's first card then the dealer hits until the dealer's hand's value is above 16
         self.dealer_hand[0].face_up()
@@ -462,7 +506,7 @@ class TwoPlayer_GameView(arcade.View):
         """draws text, gif, and victory & loss screens.
         
         Args:
-            self (GameView): an instance of GameView.
+            self (two_player_game_view): an instance of two_player_game_view.
         """
         arcade.start_render()
         arcade.set_background_color(arcade.get_four_byte_color([11,15,19]))
@@ -525,7 +569,7 @@ class TwoPlayer_GameView(arcade.View):
         """Updates the gif if self.time is less than or equal to 900
         
         Args:
-            self (GameView): an instance of GameView.
+            self (two_player_game_view): an instance of two_player_game_view.
             delta_time (time): calls this function every 1/60th of a second
         """
         self.time += 1
@@ -537,8 +581,7 @@ class TwoPlayer_GameView(arcade.View):
         """Puts cards in the correct location on the screen
         
         Args:
-            self (GameView): an instance of GameView.
-            hand (String): keeps track of player and dealer
+            self (two_player_game_view): an instance of two_player_game_view.
         """
         dealer_y = 400
         player_y = 240
@@ -563,7 +606,7 @@ class TwoPlayer_GameView(arcade.View):
         """Controls the sequence of play.
         
         Args:
-            self (GameView): an instance of GameView.
+            self (two_player_game_view): an instance of two_player_game_view.
             symbol (int): this takes user input
             modifiers (int): this takes user input
         """

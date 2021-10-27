@@ -19,7 +19,7 @@ class TwoPlayerContinueGameView(arcade.View):
             victory1 (boolean): if player one won or not
             victory2 (boolean): if player two won or not
             both_victory (boolean): if both players beat the dealer
-            defeath (boolean): if both players lost to the dealer
+            defeat (boolean): if both players lost to the dealer
             game_over1(boolean): if player one still has chips
             game_over1(boolean): if player two still has chips
         """
