@@ -4,6 +4,7 @@ from .card import Card
 import random
 from .continue_game_view import ContinueGameView
 import sys
+from pathlib import Path
 
 # Constants for sizing
 
@@ -79,7 +80,7 @@ class GameView(arcade.View):
         self.game_window = game_window
         self.bet = 100
         
-        self.gif = arcade.load_animated_gif("game\penguin\card.gif")
+        self.gif = arcade.load_animated_gif(Path(__file__).parent / "penguin" / "card.gif")
         self.gif.center_x = 400
         self.gif.center_y = 300
         self.time = 0
