@@ -1,4 +1,5 @@
 import arcade
+import arcade.gui
 from .card import Card
 import random
 from .continue_game_view import ContinueGameView
@@ -42,6 +43,7 @@ FACE_CARDS = ["J", "Q", "K"]
 #maybe bust sound gameover4.wav
 #maybe win sound upgrade2.wav
 chips = 1000
+placed_bet = False
 
 
 class GameView(arcade.View):
@@ -67,6 +69,7 @@ class GameView(arcade.View):
         self.dealer_ace_count = 0
         self.player_almost_bust = 0
         self.dealer_almost_bust = 0
+        self.final_bet = 0
         self.blackjack = False
         self.victory = False
         self.defeat = False
@@ -74,6 +77,7 @@ class GameView(arcade.View):
         self.setup_newgame()
         self.continue_game_view = continue_game_view
         self.game_window = game_window
+        self.bet = 100
         
         self.gif = arcade.load_animated_gif("game\penguin\card.gif")
         self.gif.center_x = 400
@@ -90,10 +94,10 @@ class GameView(arcade.View):
 
         """
         global chips
-        if chips < 100:
-            self.game_over = True
-        chips -= 100
         self.bet = 100
+        if chips < self.bet: 
+            self.game_over = True
+        chips -= self.bet
         
 
         self.cards_list = arcade.SpriteList()
@@ -131,8 +135,11 @@ class GameView(arcade.View):
         #first_card.face_down()
         #self.dealer_hand[0].face_down()
         self.hit("player")
+        self.player_hand[0].face_down()
         self.hit("dealer")
+        self.dealer_hand[1].face_down()
         self.hit("player")
+        self.player_hand[1].face_down()
         self.update_card_positions()
         
     def calculate_value(self, hand):
@@ -210,8 +217,8 @@ class GameView(arcade.View):
             self (GameView): an instance of GameView.
         """
         global chips
-        chips -= 100
-        self.bet += 100
+        chips -= self.bet
+        self.bet = self.bet * 2
         self.hit("player")
         self.endgame()
 
@@ -230,11 +237,12 @@ class GameView(arcade.View):
             self (GameView): an instance of GameView.
         """
         global chips
-        if self.blackjack:
-            chips += (self.bet * 2.5)
-        else:
-            chips += (self.bet * 2)
+        global placed_bet
+
+        chips = (self.final_bet*2 + chips)
         self.victory = True
+        placed_bet = False
+
 
     def player_lose(self):
         """if the player loses set self.defeat to true
@@ -242,7 +250,10 @@ class GameView(arcade.View):
         Args:
             self (GameView): an instance of GameView.
         """
+        global chips
+        chips = chips - self.final_bet
         self.defeat = True
+        placed_bet = False
 
     def endgame(self):
         """Ends the game - is called when the player chooses to 'stand'
@@ -297,12 +308,46 @@ class GameView(arcade.View):
             global chips
             arcade.set_background_color(arcade.color.AMAZON)
             arcade.draw_text("Blackjack", 65, 550, arcade.color.BLACK, 16)
-            arcade.draw_text(f"Chips: {int(chips)}", 265, 550, arcade.color.BLACK, 16)
+            arcade.draw_text(f"Chips: {int(chips)}", 500, 80, arcade.color.BLACK, 16)
             arcade.draw_text("[H] = Hit    [D] = Double Down    [S] = Stand    [Q] = Quit Game", 65, 525, arcade.color.BLACK, 16)
             arcade.draw_text("Dealer's Hand", 80, 450, arcade.color.BLACK, 16)
             arcade.draw_text("Player's Hand", 80, 250, arcade.color.BLACK, 16)
-            arcade.draw_text(f"Value: {self.dealer_value}", 280, 450, arcade.color.BLACK, 16)
-            arcade.draw_text(f"Value: {self.player_value}", 280, 250, arcade.color.BLACK, 16)
+            arcade.draw_text(f"Current Bet: {self.bet}", 500, 50, arcade.color.BLACK,16 )
+
+            if placed_bet == True:
+                arcade.draw_text(f"Value: {self.dealer_value}", 280, 450, arcade.color.BLACK, 16)
+                arcade.draw_text(f"Value: {self.player_value}", 280, 250, arcade.color.BLACK, 16)
+            
+            self.manager = arcade.gui.UIManager()
+            self.manager.enable()
+            self.v_box = arcade.gui.UIBoxLayout()
+
+# Create the buttons
+            increase_bet = arcade.gui.UIFlatButton(text="Increase Bet", width=200)
+            self.v_box.add(increase_bet.with_space_around(bottom=20))
+
+            decrease_bet = arcade.gui.UIFlatButton(text="Decrease Bet", width=200)
+            self.v_box.add(decrease_bet.with_space_around(bottom=20))
+            
+            place_bet = arcade.gui.UIFlatButton(text="Place Bet", width=200)
+            self.v_box.add(place_bet.with_space_around(bottom=20))
+
+# functions for buttons
+            increase_bet.on_click = self.on_increase_bet
+            decrease_bet.on_click = self.on_decrease_bet
+            place_bet.on_click = self.on_place_bet
+
+        # Create a widget to hold the v_box widget, that will center the buttons
+            self.manager.add(
+                arcade.gui.UIAnchorWidget(
+                    anchor_x="center_x",
+                    anchor_y="center_y",
+                    align_x= 200,
+                    align_y= 100,
+                    child=self.v_box)
+        )
+
+            self.manager.draw()
 
             if self.blackjack:
                 arcade.draw_text("Blackjack!", 480, 250, arcade.color.BLACK, 16)
@@ -322,6 +367,33 @@ class GameView(arcade.View):
                 i.draw()
             for j in self.player_hand:
                 j.draw()
+
+
+    def on_decrease_bet(self, event):
+        global chips
+        if self.bet <= 50:
+            self.bet = self.bet
+        elif self.bet > 50:
+            self.bet = self.bet - 50  
+            chips = chips + 50 
+    def on_increase_bet(self, event):
+        global chips
+        if self.bet < 1000:
+            self.bet = self.bet + 50
+            chips = chips - 50
+        elif self.bet >= 1000:
+            self.bet = self.bet
+
+    def on_place_bet (self,event):
+        global placed_bet
+        placed_bet = True
+        arcade.draw_text(f"Value: {self.dealer_value}", 280, 450, arcade.color.BLACK, 16)
+        arcade.draw_text(f"Value: {self.player_value}", 280, 250, arcade.color.BLACK, 16)
+            
+        self.final_bet = self.bet
+        self.dealer_hand[1].face_up()
+        self.player_hand[0].face_up()
+        self.player_hand[1].face_up()
             
     
     def on_update(self, delta_time): 
@@ -369,18 +441,19 @@ class GameView(arcade.View):
         audio_name_three = arcade.sound.load_sound(":resources:sounds/rockHit2.wav")
         audio_name_four = arcade.sound.load_sound(":resources:sounds/coin3.wav")
         audio_name_five = arcade.sound.load_sound(":resources:sounds/coin4.wav")
+        global placed_bet
 
-        if symbol == arcade.key.H and not self.game_over:
+        if symbol == arcade.key.H and not self.game_over and placed_bet == True:
             # Hit
             arcade.sound.play_sound(audio_name_three)
             self.hit("player")
 
-        elif symbol == arcade.key.D and not self.game_over:
+        elif symbol == arcade.key.D and not self.game_over and placed_bet == True:
             # Double Down
             arcade.sound.play_sound(audio_name_four)
             self.double_down()
 
-        elif symbol == arcade.key.S and not self.game_over:
+        elif symbol == arcade.key.S and not self.game_over and placed_bet == True:
             # Stand
             arcade.sound.play_sound(audio_name_five)
             self.stand()

@@ -15,7 +15,13 @@ class TwoPlayerContinueGameView(arcade.View):
         """Initializer; uses inheritance for arcade.View
         
         Args:
-            self (ContinueGameView): an instance of ContinueGameView.
+            self (TwoPlayerContinueGameView): an instance of ContinueGameView.
+            victory1 (boolean): if player one won or not
+            victory2 (boolean): if player two won or not
+            both_victory (boolean): if both players beat the dealer
+            defeath (boolean): if both players lost to the dealer
+            game_over1(boolean): if player one still has chips
+            game_over1(boolean): if player two still has chips
         """
         super().__init__()
         self.window_width = 800
@@ -49,7 +55,7 @@ class TwoPlayerContinueGameView(arcade.View):
         
         Args:
             self (TwoPlayerContinueGameView): an instance of TwoPlayerContinueGameView.
-            victory (Boolean): stores if the player won or not
+            victory (Boolean): stores if the players won or not
         """
         self.both_victory = both_victory
 
