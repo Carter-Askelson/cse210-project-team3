@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import arcade
 from pathlib import Path
 
